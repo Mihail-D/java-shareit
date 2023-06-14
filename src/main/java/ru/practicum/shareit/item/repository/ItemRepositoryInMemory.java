@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ItemRepositoryInMemory implements ItemRepository {
     private final List<Item> items = new ArrayList<>();
-    private Long nextId = 1L;
+    private Long currentId = 1L;
 
     @Override
     public List<Item> findAllItems(Long userId) {
@@ -42,7 +42,7 @@ public class ItemRepositoryInMemory implements ItemRepository {
     @Override
     public Item createItem(Long userId, Item item) {
         if (item.getId() == null) {
-            item.setId(nextId++);
+            item.setId(currentId++);
         }
         items.add(item);
         return item;

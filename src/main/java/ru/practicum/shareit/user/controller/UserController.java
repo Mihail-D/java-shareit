@@ -8,8 +8,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.validator.Create;
-import ru.practicum.shareit.user.validator.Update;
+import ru.practicum.shareit.user.dto.Create;
+import ru.practicum.shareit.user.dto.Update;
 
 import java.util.List;
 
@@ -22,33 +22,33 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> findAllUsers() {
-        log.debug("UserController: выпонлено findAllUsers.");
+        log.debug("UserController: findAllUsers executed.");
         return UserMapper.toUserDtoList(userService.findAllUsers());
     }
 
     @GetMapping("/{userId}")
     public UserDto findUserById(@PathVariable Long userId) {
-        log.debug("UserController: выпонлено findUserById - {}.", userId);
+        log.debug("UserController: findUserById executed with {}.", userId);
         return UserMapper.toUserDto(userService.findUserById(userId));
     }
 
     @PostMapping
     public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        log.debug("UserController: выпонлено createUser - {}.", userDto);
+        log.debug("UserController: createUser executed with {}.", userDto);
         User user = UserMapper.toUser(userDto);
         return UserMapper.toUserDto(userService.createUser(user));
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable Long userId, @Validated(Update.class) @RequestBody UserDto userDto) {
-        log.debug("UserController: выпонлено updateUser - {}.", userDto);
+        log.debug("UserController: updateUser executed with {}.", userDto);
         User user = UserMapper.toUser(userDto);
         return UserMapper.toUserDto(userService.updateUser(userId, user));
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUserById(@PathVariable Long userId) {
-        log.debug("UserController: выпонлено deleteUserById - {}.", userId);
+        log.debug("UserController: deleteUserById executed with {}.", userId);
         userService.deleteUserById(userId);
     }
 }

@@ -9,5 +9,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 public class BookingController {
+
     private final BookingService bookingService;
 }

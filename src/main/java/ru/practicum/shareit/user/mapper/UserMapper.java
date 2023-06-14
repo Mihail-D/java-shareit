@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 @Mapper
 public class UserMapper {
+
     public static UserDto toUserDto(User user) {
         return new UserDto(
                 user.getId(),

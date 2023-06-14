@@ -6,7 +6,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import java.util.*;
 
 @Repository
-public class ItemRequestRepositoryInMemory implements ItemRequestRepository {
+public class InMemoryItemRequestRepository implements ItemRequestRepository {
 
     private final Map<Long, ItemRequest> itemRequests = new HashMap<>();
     private Long currentId = 1L;

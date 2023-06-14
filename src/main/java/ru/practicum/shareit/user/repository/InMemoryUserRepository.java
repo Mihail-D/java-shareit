@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryInMemory implements UserRepository {
+public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Long, User> users = new HashMap<>();
     private Long currentId = 1L;
 

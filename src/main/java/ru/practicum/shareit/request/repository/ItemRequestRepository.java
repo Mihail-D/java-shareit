@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface ItemRequestRepository {
 
-    List<ItemRequest> findAllItemRequests();
+    List<ItemRequest> getAllItemRequests();
 
-    Optional<ItemRequest> findItemRequestById(Long itemRequestId);
+    Optional<ItemRequest> getItemRequestById(Long itemRequestId);
 
     ItemRequest createItemRequest(ItemRequest itemRequest);
 

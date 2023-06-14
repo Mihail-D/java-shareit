@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
             throw new AlreadyExistsException(Item.class.toString(), item.getId());
         }
         item.setOwner(userService.findUserById(userId));
-        item.setRequest(requestId != null ? itemRequestService.findItemRequestById(requestId) : null);
+        item.setRequest(requestId != null ? itemRequestService.getItemRequestById(requestId) : null);
         item = itemRepository.createItem(userId, item);
         log.debug("ItemService: createItem executed with {}.", item);
         return item;
@@ -64,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
         item.setOwner(userService.findUserById(userId));
-        item.setRequest(requestId != null ? itemRequestService.findItemRequestById(requestId) : null);
+        item.setRequest(requestId != null ? itemRequestService.getItemRequestById(requestId) : null);
         item = itemRepository.updateItem(userId, itemId, item);
         log.debug("ItemService: updateItem executed with {}.", item);
         return item;

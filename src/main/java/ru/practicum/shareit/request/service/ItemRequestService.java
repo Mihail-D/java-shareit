@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ItemRequestService {
 
-    List<ItemRequest> findAllItemRequests();
+    List<ItemRequest> getAllItemRequests();
 
-    ItemRequest findItemRequestById(Long itemRequestId);
+    ItemRequest getItemRequestById(Long itemRequestId);
 
     ItemRequest createItemRequest(ItemRequest itemRequest);
 

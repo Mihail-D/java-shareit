@@ -17,17 +17,17 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRep;
 
     @Override
-    public List<ItemRequest> findAllItemRequests() {
-        log.debug("RequestService: выполнено findAllItemRequests.");
-        return itemRequestRep.findAllItemRequests();
+    public List<ItemRequest> getAllItemRequests() {
+        log.debug("Getting all item requests.");
+        return itemRequestRep.getAllItemRequests();
     }
 
     @Override
-    public ItemRequest findItemRequestById(Long itemRequestId) {
-        ItemRequest itemRequest = itemRequestRep.findItemRequestById(itemRequestId).orElseThrow(
+    public ItemRequest getItemRequestById(Long itemRequestId) {
+        ItemRequest itemRequest = itemRequestRep.getItemRequestById(itemRequestId).orElseThrow(
                 () -> new NotFoundException(ItemRequest.class.toString(), itemRequestId)
         );
-        log.debug("RequestService: выполнено findItemRequestById - {}.", itemRequest);
+        log.debug("Getting item request by ID with {}.", itemRequest);
         return itemRequest;
     }
 
@@ -37,7 +37,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new AlreadyExistsException(ItemRequest.class.toString(), itemRequest.getId());
         }
         itemRequest = itemRequestRep.createItemRequest(itemRequest);
-        log.debug("RequestService: выполнено createItemRequest - {}.", itemRequest);
+        log.debug("Creating item request with {}.", itemRequest);
         return itemRequest;
     }
 
@@ -46,7 +46,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!itemRequestRep.itemRequestExists(itemRequest.getId())) {
             throw new NotFoundException(ItemRequest.class.toString(), itemRequest.getId());
         }
-        log.debug("RequestService: выполнено updateItemRequest - {}.", itemRequest);
+        log.debug("Updating item request with {}.", itemRequest);
         return itemRequestRep.updateItemRequest(itemRequest);
     }
 
@@ -56,6 +56,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException(ItemRequest.class.toString(), itemRequestId);
         }
         itemRequestRep.deleteItemRequestById(itemRequestId);
-        log.debug("RequestService: выполнено deleteItemRequestById - ID {}.", itemRequestId);
+        log.debug("Deleting item request with ID {}.", itemRequestId);
     }
 }

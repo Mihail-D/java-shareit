@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.OperationAccessException;
 import ru.practicum.shareit.item.model.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryInMemory implements ItemRepository {
+
     private final List<Item> items = new ArrayList<>();
     private Long currentId = 1L;
 
@@ -41,38 +43,33 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Item createItem(Long userId, Item item) {
-        if (item.getId() == null) {
-            item.setId(currentId++);
-        }
+        item.setId(currentId++);
         items.add(item);
         return item;
     }
 
-    @Override
-    public Item updateItem(Long userId, Long itemId, Item item) {
-        Item oldItem = findItemById(itemId).orElseThrow(
-                () -> new NotFoundException(Item.class.toString(), itemId)
-        );
-        if (!userId.equals(oldItem.getOwner().getId())) {
+    private void checkUserId(Long userId, Item itemToCheck) {
+        if (!userId.equals(itemToCheck.getOwner().getId())) {
             throw new OperationAccessException(userId);
         }
-        if (item.getName() != null) {
-            oldItem.setName(item.getName());
-        }
-        if (item.getDescription() != null) {
-            oldItem.setDescription(item.getDescription());
-        }
-        if (item.getAvailable() != null) {
-            oldItem.setAvailable(item.getAvailable());
-        }
-        return oldItem;
+    }
+
+    @Override
+    public Item updateItem(Long userId, Long itemId, Item updatedItem) {
+        Item itemToUpdate = findItemById(itemId)
+                .orElseThrow(() -> new NotFoundException(Item.class.toString(), itemId));
+        checkUserId(userId, itemToUpdate);
+        itemToUpdate.setName(updatedItem.getName());
+        itemToUpdate.setDescription(updatedItem.getDescription());
+        itemToUpdate.setAvailable(updatedItem.getAvailable());
+        return itemToUpdate;
     }
 
     @Override
     public void deleteItemById(Long itemId) {
-        items.remove(findItemById(itemId).orElseThrow(
-                () -> new NotFoundException(Item.class.toString(), itemId)
-        ));
+        Item itemToDelete = findItemById(itemId)
+                .orElseThrow(() -> new NotFoundException(Item.class.toString(), itemId));
+        items.remove(itemToDelete);
     }
 
     @Override

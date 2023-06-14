@@ -6,12 +6,11 @@ import lombok.Data;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Objects;
-
 @Data
 @AllArgsConstructor
 @Builder
 public class Item {
+
     private Long id;
     private String name;
     private String description;
@@ -21,14 +20,41 @@ public class Item {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Item item = (Item) o;
-        return id.equals(item.id) || name.equals(item.name) && description.equals(item.description);
+
+        if (!getId().equals(item.getId())) {
+            return false;
+        }
+        if (!getName().equals(item.getName())) {
+            return false;
+        }
+        if (!getDescription().equals(item.getDescription())) {
+            return false;
+        }
+        if (!getAvailable().equals(item.getAvailable())) {
+            return false;
+        }
+        if (!getOwner().equals(item.getOwner())) {
+            return false;
+        }
+        return getRequest().equals(item.getRequest());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        int result = getId().hashCode();
+        result = 31 * result + getName().hashCode();
+        result = 31 * result + getDescription().hashCode();
+        result = 31 * result + getAvailable().hashCode();
+        result = 31 * result + getOwner().hashCode();
+        result = 31 * result + getRequest().hashCode();
+        return result;
     }
 }

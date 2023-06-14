@@ -16,65 +16,66 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepository itemRep;
+
+    private final ItemRepository itemRepo;
     private final UserService userService;
     private final ItemRequestService requestService;
 
     @Override
     public List<Item> findAllItems(Long userId) {
-        log.debug("ItemService: выполнено findAllItems.");
-        return itemRep.findAllItems(userId);
+        log.debug("ItemService: Executed findAllItems.");
+        return itemRepo.findAllItems(userId);
     }
 
     @Override
     public Item findItemById(Long userId, Long itemId) {
-        if (!itemRep.itemExists(itemId)) {
+        if (!itemRepo.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
-        Item item = itemRep.findItemById(itemId).orElseThrow(
+        Item item = itemRepo.findItemById(itemId).orElseThrow(
                 () -> new NotFoundException(Item.class.toString(), itemId)
         );
-        log.debug("ItemService: выполнено findItemById - {}.", item);
+        log.debug("ItemService: Executed findItemById {}.", item);
         return item;
     }
 
     @Override
     public List<Item> findItemsByText(String text) {
-            List<Item> searchedItems = itemRep.findItemsByText(text.toLowerCase());
-            log.debug("ItemService: выполнено findItemsByText - {}.", searchedItems);
-            return searchedItems;
+        List<Item> searchedItems = itemRepo.findItemsByText(text.toLowerCase());
+        log.debug("ItemService: Executed findItemsByText {}.", searchedItems);
+        return searchedItems;
     }
 
     @Override
     public Item createItem(Long userId, Item item, Long requestId) {
-        if (item.getId() != null && itemRep.itemExists(item.getId())) {
+        if (item.getId() != null && itemRepo.itemExists(item.getId())) {
             throw new AlreadyExistsException(Item.class.toString(), item.getId());
         }
         item.setOwner(userService.findUserById(userId));
         item.setRequest(requestId != null ? requestService.findItemRequestById(requestId) : null);
-        item = itemRep.createItem(userId, item);
-        log.debug("ItemService: выполнено createItem - {}.", item);
+        item = itemRepo.createItem(userId, item);
+        log.debug("ItemService: Executed createItem {}.", item);
         return item;
     }
 
     @Override
     public Item updateItem(Long userId, Long itemId, Item item, Long requestId) {
-        if (!itemRep.itemExists(itemId)) {
+        if (!itemRepo.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
         item.setOwner(userService.findUserById(userId));
         item.setRequest(requestId != null ? requestService.findItemRequestById(requestId) : null);
-        item = itemRep.updateItem(userId, itemId, item);
-        log.debug("ItemService: выполнено updateItem - {}.", item);
+        item = itemRepo.updateItem(userId, itemId, item);
+        log.debug("ItemService: Executed updateItem {}.", item);
         return item;
     }
 
     @Override
     public void deleteItemById(Long userId, Long itemId) {
-        if (!itemRep.itemExists(itemId)) {
+        if (!itemRepo.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
-        itemRep.deleteItemById(itemId);
-        log.debug("ItemService: выполнено deleteItemById - ID {}.", itemId);
+        itemRepo.deleteItemById(itemId);
+        log.debug("ItemService: Executed deleteItemById id {}.", itemId);
     }
 }

@@ -9,5 +9,6 @@ import ru.practicum.shareit.request.service.ItemRequestService;
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 public class ItemRequestController {
+
     private final ItemRequestService requestService;
 }

@@ -1,11 +1,12 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> findAllBookings() {
-        log.debug("BookingService: done findAllBookings.");
+        log.debug("BookingService: выполнено findAllBookings.");
         return bookingRep.findAllBookings();
     }
 
@@ -25,7 +26,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking =  bookingRep.findBookingById(bookingId).orElseThrow(
                 () -> new NotFoundException(Booking.class.toString(), bookingId)
         );
-        log.debug("BookingService: done findBookingById - {}.", booking);
+        log.debug("BookingService: выполнено findBookingById - {}.", booking);
         return booking;
     }
 
@@ -35,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
             throw new AlreadyExistsException(Booking.class.toString(), booking.getId());
         }
         booking = bookingRep.createBooking(booking);
-        log.debug("BookingService: done createBooking - {}.", booking);
+        log.debug("BookingService: выполнено createBooking - {}.", booking);
         return booking;
     }
 
@@ -44,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
         if (!bookingRep.bookingExists(booking.getId())) {
             throw new NotFoundException(Booking.class.toString(), booking.getId());
         }
-        log.debug("BookingService: done updateBooking - {}.", booking);
+        log.debug("BookingService: выполнено updateBooking - {}.", booking);
         return bookingRep.updateBooking(booking);
     }
 
@@ -54,6 +55,6 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException(Booking.class.toString(), bookingId);
         }
         bookingRep.deleteBookingById(bookingId);
-        log.debug("BookingService: done deleteBookingById - ID {}.", bookingId);
+        log.debug("BookingService: выполнено deleteBookingById - ID {}.", bookingId);
     }
 }

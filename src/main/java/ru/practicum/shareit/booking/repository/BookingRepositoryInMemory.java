@@ -1,6 +1,7 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.ArrayList;
 import java.util.HashMap;

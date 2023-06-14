@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface ItemService {
 
-    List<Item> findAllItems(Long userId);
+    List<Item> getAllItems(Long userId);
 
-    Item findItemById(Long userId, Long itemId);
+    Item getItemById(Long userId, Long itemId);
 
-    List<Item> findItemsByText(String text);
+    List<Item> getItemsByText(String text);
 
     Item createItem(Long userId, Item item, Long requestId);
 
@@ -18,3 +18,4 @@ public interface ItemService {
 
     void deleteItemById(Long userId, Long itemId);
 }
+

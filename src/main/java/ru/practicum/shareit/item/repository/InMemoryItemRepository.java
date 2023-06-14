@@ -11,27 +11,27 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class ItemRepositoryInMemory implements ItemRepository {
+public class InMemoryItemRepository implements ItemRepository {
 
     private final List<Item> items = new ArrayList<>();
-    private Long currentId = 1L;
+    private Long nextId = 1L;
 
     @Override
-    public List<Item> findAllItems(Long userId) {
+    public List<Item> getAllItems(Long userId) {
         return items.stream()
                 .filter(item -> userId.equals(item.getOwner().getId()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Item> findItemById(Long itemId) {
+    public Optional<Item> getItemById(Long itemId) {
         return items.stream()
                 .filter(item -> itemId.equals(item.getId()))
                 .findFirst();
     }
 
     @Override
-    public List<Item> findItemsByText(String text) {
+    public List<Item> getItemsByText(String text) {
         return items.stream()
                 .filter(Item::getAvailable)
                 .filter(item ->
@@ -43,33 +43,38 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Item createItem(Long userId, Item item) {
-        item.setId(currentId++);
+        if (item.getId() == null) {
+            item.setId(nextId++);
+        }
         items.add(item);
         return item;
     }
 
-    private void checkUserId(Long userId, Item itemToCheck) {
-        if (!userId.equals(itemToCheck.getOwner().getId())) {
+    @Override
+    public Item updateItem(Long userId, Long itemId, Item item) {
+        Item oldItem = getItemById(itemId).orElseThrow(
+                () -> new NotFoundException(Item.class.toString(), itemId)
+        );
+        if (!userId.equals(oldItem.getOwner().getId())) {
             throw new OperationAccessException(userId);
         }
-    }
-
-    @Override
-    public Item updateItem(Long userId, Long itemId, Item updatedItem) {
-        Item itemToUpdate = findItemById(itemId)
-                .orElseThrow(() -> new NotFoundException(Item.class.toString(), itemId));
-        checkUserId(userId, itemToUpdate);
-        itemToUpdate.setName(updatedItem.getName());
-        itemToUpdate.setDescription(updatedItem.getDescription());
-        itemToUpdate.setAvailable(updatedItem.getAvailable());
-        return itemToUpdate;
+        if (item.getName() != null) {
+            oldItem.setName(item.getName());
+        }
+        if (item.getDescription() != null) {
+            oldItem.setDescription(item.getDescription());
+        }
+        if (item.getAvailable() != null) {
+            oldItem.setAvailable(item.getAvailable());
+        }
+        return oldItem;
     }
 
     @Override
     public void deleteItemById(Long itemId) {
-        Item itemToDelete = findItemById(itemId)
-                .orElseThrow(() -> new NotFoundException(Item.class.toString(), itemId));
-        items.remove(itemToDelete);
+        items.remove(getItemById(itemId).orElseThrow(
+                () -> new NotFoundException(Item.class.toString(), itemId)
+        ));
     }
 
     @Override

@@ -17,65 +17,65 @@ import java.util.List;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepo;
+    private final ItemRepository itemRepository;
     private final UserService userService;
-    private final ItemRequestService requestService;
+    private final ItemRequestService itemRequestService;
 
     @Override
-    public List<Item> findAllItems(Long userId) {
-        log.debug("ItemService: Executed findAllItems.");
-        return itemRepo.findAllItems(userId);
+    public List<Item> getAllItems(Long userId) {
+        log.debug("ItemService: getAllItems executed.");
+        return itemRepository.getAllItems(userId);
     }
 
     @Override
-    public Item findItemById(Long userId, Long itemId) {
-        if (!itemRepo.itemExists(itemId)) {
+    public Item getItemById(Long userId, Long itemId) {
+        if (!itemRepository.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
-        Item item = itemRepo.findItemById(itemId).orElseThrow(
+        Item item = itemRepository.getItemById(itemId).orElseThrow(
                 () -> new NotFoundException(Item.class.toString(), itemId)
         );
-        log.debug("ItemService: Executed findItemById {}.", item);
+        log.debug("ItemService: getItemById executed with {}.", item);
         return item;
     }
 
     @Override
-    public List<Item> findItemsByText(String text) {
-        List<Item> searchedItems = itemRepo.findItemsByText(text.toLowerCase());
-        log.debug("ItemService: Executed findItemsByText {}.", searchedItems);
+    public List<Item> getItemsByText(String text) {
+        List<Item> searchedItems = itemRepository.getItemsByText(text.toLowerCase());
+        log.debug("ItemService: getItemsByText executed with {}.", searchedItems);
         return searchedItems;
     }
 
     @Override
     public Item createItem(Long userId, Item item, Long requestId) {
-        if (item.getId() != null && itemRepo.itemExists(item.getId())) {
+        if (item.getId() != null && itemRepository.itemExists(item.getId())) {
             throw new AlreadyExistsException(Item.class.toString(), item.getId());
         }
         item.setOwner(userService.findUserById(userId));
-        item.setRequest(requestId != null ? requestService.findItemRequestById(requestId) : null);
-        item = itemRepo.createItem(userId, item);
-        log.debug("ItemService: Executed createItem {}.", item);
+        item.setRequest(requestId != null ? itemRequestService.findItemRequestById(requestId) : null);
+        item = itemRepository.createItem(userId, item);
+        log.debug("ItemService: createItem executed with {}.", item);
         return item;
     }
 
     @Override
     public Item updateItem(Long userId, Long itemId, Item item, Long requestId) {
-        if (!itemRepo.itemExists(itemId)) {
+        if (!itemRepository.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
         item.setOwner(userService.findUserById(userId));
-        item.setRequest(requestId != null ? requestService.findItemRequestById(requestId) : null);
-        item = itemRepo.updateItem(userId, itemId, item);
-        log.debug("ItemService: Executed updateItem {}.", item);
+        item.setRequest(requestId != null ? itemRequestService.findItemRequestById(requestId) : null);
+        item = itemRepository.updateItem(userId, itemId, item);
+        log.debug("ItemService: updateItem executed with {}.", item);
         return item;
     }
 
     @Override
     public void deleteItemById(Long userId, Long itemId) {
-        if (!itemRepo.itemExists(itemId)) {
+        if (!itemRepository.itemExists(itemId)) {
             throw new NotFoundException(Item.class.toString(), itemId);
         }
-        itemRepo.deleteItemById(itemId);
-        log.debug("ItemService: Executed deleteItemById id {}.", itemId);
+        itemRepository.deleteItemById(itemId);
+        log.debug("ItemService: deleteItemById executed with id {}.", itemId);
     }
 }

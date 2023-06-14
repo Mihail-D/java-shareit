@@ -5,34 +5,30 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.OperationAccessException;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryItemRepository implements ItemRepository {
 
-    private final List<Item> items = new ArrayList<>();
+    private final Map<Long, Item> items = new HashMap<>();
     private Long nextId = 1L;
 
     @Override
     public List<Item> getAllItems(Long userId) {
-        return items.stream()
+        return items.values().stream()
                 .filter(item -> userId.equals(item.getOwner().getId()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Item> getItemById(Long itemId) {
-        return items.stream()
-                .filter(item -> itemId.equals(item.getId()))
-                .findFirst();
+        return Optional.ofNullable(items.get(itemId));
     }
 
     @Override
     public List<Item> getItemsByText(String text) {
-        return items.stream()
+        return items.values().stream()
                 .filter(Item::getAvailable)
                 .filter(item ->
                         item.getName().toLowerCase().contains(text)
@@ -46,7 +42,7 @@ public class InMemoryItemRepository implements ItemRepository {
         if (item.getId() == null) {
             item.setId(nextId++);
         }
-        items.add(item);
+        items.put(item.getId(), item);
         return item;
     }
 
@@ -72,14 +68,14 @@ public class InMemoryItemRepository implements ItemRepository {
 
     @Override
     public void deleteItemById(Long itemId) {
-        items.remove(getItemById(itemId).orElseThrow(
-                () -> new NotFoundException(Item.class.toString(), itemId)
-        ));
+        if (!items.containsKey(itemId)) {
+            throw new NotFoundException(Item.class.toString(), itemId);
+        }
+        items.remove(itemId);
     }
 
     @Override
     public boolean itemExists(Long itemId) {
-        return items.stream()
-                .anyMatch(item -> itemId.equals(item.getId()));
+        return items.containsKey(itemId);
     }
 }

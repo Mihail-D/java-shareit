@@ -37,7 +37,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> handleThrowable(final Throwable e) {
-        log.debug(e.getMessage());
+        log.error("Unexpected error occurred", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

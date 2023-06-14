@@ -22,40 +22,40 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.debug("Выполнено getAllItems - {}.", userId);
+        log.debug("Выполнено getAllItems with {}.", userId);
         List<ItemDto> items = ItemMapper.toItemDtoList(itemService.getAllItems(userId));
-        log.debug("Результат getAllItems - {}.", items);
+        log.debug("Executed getAllItems with {}.", items);
         return items;
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
-        log.debug("Выполнено getItemById - {}.", itemId);
+        log.debug("Executed getItemById with {}.", itemId);
         ItemDto item = ItemMapper.toItemDto(itemService.getItemById(userId, itemId));
-        log.debug("Результат getItemById - {}.", item);
+        log.debug("Result getItemById with {}.", item);
         return item;
     }
 
     @GetMapping("/search")
     public List<ItemDto> findItemByParams(@RequestParam(required = false) String text) {
         if (text == null || text.isBlank()) {
-            log.debug("Выполнено findItemByParams - текст не обнаружен.");
+            log.debug("Executed findItemByParams text not found.");
             return Collections.emptyList();
         }
-        log.debug("Выполнено findItemByParams - {}.", text);
+        log.debug("Executed findItemByParams with {}.", text);
         List<ItemDto> items = ItemMapper.toItemDtoList(itemService.getItemsByText(text));
-        log.debug("Результат findItemByParams - {}.", items);
+        log.debug("Result findItemByParams with {}.", items);
         return items;
     }
 
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
-        log.debug("Выполнено createItem - {}.", itemDto);
+        log.debug("Executed createItem with {}.", itemDto);
         Item item = ItemMapper.toItem(itemDto);
         Long requestId = itemDto.getRequest();
         Item createdItem = itemService.createItem(userId, item, requestId);
         ItemDto createdItemDto = ItemMapper.toItemDto(createdItem);
-        log.debug("Результат createItem - {}.", createdItemDto);
+        log.debug("Result createItem with {}.", createdItemDto);
         return createdItemDto;
     }
 
@@ -65,18 +65,18 @@ public class ItemController {
             @PathVariable Long itemId,
             @RequestBody ItemDto itemDto
     ) {
-        log.debug("Выполнено updateItem - {}.", itemDto);
+        log.debug("Executed updateItem with {}.", itemDto);
         Item item = ItemMapper.toItem(itemDto);
         Long requestId = itemDto.getRequest();
         Item updatedItem = itemService.updateItem(userId, itemId, item, requestId);
         ItemDto updatedItemDto = ItemMapper.toItemDto(updatedItem);
-        log.debug("Результат updateItem - {}.", updatedItemDto);
+        log.debug("Result updateItem with {}.", updatedItemDto);
         return updatedItemDto;
     }
 
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
-        log.debug("Выполнено deleteItem - {}.", itemId);
+        log.debug("Executed deleteItem with {}.", itemId);
         itemService.deleteItemById(userId, itemId);
     }
 

@@ -3,12 +3,15 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,38 +19,43 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
 
     @Override
-    public List<Booking> findAllBookings() {
+    public List<BookingDto> findAllBookings() {
         log.debug("Finding all bookings.");
-        return bookingRepository.findAllBookings();
+        List<Booking> bookings = bookingRepository.findAllBookings();
+        return bookings.stream().map(bookingMapper::toBookingDto).collect(Collectors.toList());
     }
 
     @Override
-    public Booking findBookingById(Long bookingId) {
+    public BookingDto findBookingById(Long bookingId) {
         Booking booking = bookingRepository.findBookingById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking", bookingId));
         log.debug("Finding booking by id: {}.", booking);
-        return booking;
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
-    public Booking createBooking(Booking booking) {
+    public BookingDto createBooking(BookingDto bookingDto) {
+        Booking booking = bookingMapper.toBooking(bookingDto);
         if (booking.getId() != null && bookingRepository.bookingExists(booking.getId())) {
             throw new AlreadyExistsException("Booking", booking.getId());
         }
         booking = bookingRepository.createBooking(booking);
         log.debug("Creating booking: {}.", booking);
-        return booking;
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
-    public Booking updateBooking(Booking booking) {
+    public BookingDto updateBooking(BookingDto bookingDto) {
+        Booking booking = bookingMapper.toBooking(bookingDto);
         if (!bookingRepository.bookingExists(booking.getId())) {
             throw new NotFoundException("Booking", booking.getId());
         }
+        booking = bookingRepository.updateBooking(booking);
         log.debug("Updating booking: {}.", booking);
-        return bookingRepository.updateBooking(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -55,7 +63,5 @@ public class BookingServiceImpl implements BookingService {
         if (!bookingRepository.bookingExists(bookingId)) {
             throw new NotFoundException("Booking", bookingId);
         }
-        bookingRepository.deleteBookingById(bookingId);
-        log.debug("Deleting booking with id: {}.", bookingId);
     }
 }

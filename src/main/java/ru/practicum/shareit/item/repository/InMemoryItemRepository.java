@@ -14,6 +14,10 @@ public class InMemoryItemRepository implements ItemRepository {
     private final Map<Long, Item> items = new HashMap<>();
     private Long nextId = 1L;
 
+    public InMemoryItemRepository() {
+
+    }
+
     @Override
     public List<Item> getAllItems(Long userId) {
         return items.values().stream()

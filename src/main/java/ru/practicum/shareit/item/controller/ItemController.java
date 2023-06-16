@@ -79,5 +79,4 @@ public class ItemController {
         log.debug("Executed deleteItem with {}.", itemId);
         itemService.deleteItemById(userId, itemId);
     }
-
 }

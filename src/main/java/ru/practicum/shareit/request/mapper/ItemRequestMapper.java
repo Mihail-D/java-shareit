@@ -9,7 +9,8 @@ public class ItemRequestMapper {
 
     private static ItemRequestMapper instance;
 
-    private ItemRequestMapper() {}
+    private ItemRequestMapper() {
+    }
 
     public static synchronized ItemRequestMapper getInstance() {
         if (instance == null) {

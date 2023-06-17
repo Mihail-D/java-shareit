@@ -23,7 +23,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.debug("Выполнено getAllItems with {}.", userId);
+        log.debug("Executed getAllItems with {}.", userId);
         List<ItemDto> items = itemMapper.toItemDtoList(itemService.getAllItems(userId));
         log.debug("Executed getAllItems with {}.", items);
         return items;

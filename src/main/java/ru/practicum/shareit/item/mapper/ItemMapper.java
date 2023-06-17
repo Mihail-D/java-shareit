@@ -16,7 +16,8 @@ public class ItemMapper {
 
     private static ItemMapper instance;
 
-    private ItemMapper() {}
+    private ItemMapper() {
+    }
 
     public static synchronized ItemMapper getInstance() {
         if (instance == null) {

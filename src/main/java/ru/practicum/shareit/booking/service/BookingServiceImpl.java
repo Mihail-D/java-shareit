@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
-    private final BookingMapper bookingMapper;
+    private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     @Override
     public List<BookingDto> findAllBookings() {

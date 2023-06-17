@@ -10,7 +10,19 @@ import java.util.stream.Collectors;
 @Mapper
 public class UserMapper {
 
-    public static UserDto toUserDto(User user) {
+    private static UserMapper instance;
+
+    private UserMapper() {
+    }
+
+    public static synchronized UserMapper getInstance() {
+        if (instance == null) {
+            instance = new UserMapper();
+        }
+        return instance;
+    }
+
+    public UserDto toUserDto(User user) {
         return new UserDto(
                 user.getId(),
                 user.getEmail(),
@@ -18,7 +30,7 @@ public class UserMapper {
         );
     }
 
-    public static User toUser(UserDto userDto) {
+    public User toUser(UserDto userDto) {
         return new User(
                 userDto.getId(),
                 userDto.getEmail(),
@@ -26,9 +38,9 @@ public class UserMapper {
         );
     }
 
-    public static List<UserDto> toUserDtoList(List<User> users) {
+    public List<UserDto> toUserDtoList(List<User> users) {
         return users.stream()
-                .map(UserMapper::toUserDto)
+                .map(this::toUserDto)
                 .collect(Collectors.toList());
     }
 }

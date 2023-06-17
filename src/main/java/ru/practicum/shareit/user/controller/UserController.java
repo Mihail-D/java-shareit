@@ -19,31 +19,32 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final UserService userService;
+   private final UserMapper userMapper = UserMapper.getInstance();
 
     @GetMapping
     public List<UserDto> findAllUsers() {
         log.debug("UserController: findAllUsers executed.");
-        return UserMapper.toUserDtoList(userService.findAllUsers());
+        return userMapper.toUserDtoList(userService.findAllUsers());
     }
 
     @GetMapping("/{userId}")
     public UserDto findUserById(@PathVariable Long userId) {
         log.debug("UserController: findUserById executed with {}.", userId);
-        return UserMapper.toUserDto(userService.findUserById(userId));
+        return userMapper.toUserDto(userService.findUserById(userId));
     }
 
     @PostMapping
     public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
         log.debug("UserController: createUser executed with {}.", userDto);
-        User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userService.createUser(user));
+        User user = userMapper.toUser(userDto);
+        return userMapper.toUserDto(userService.createUser(user));
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable Long userId, @Validated(Update.class) @RequestBody UserDto userDto) {
         log.debug("UserController: updateUser executed with {}.", userDto);
-        User user = UserMapper.toUser(userDto);
-        return UserMapper.toUserDto(userService.updateUser(userId, user));
+        User user = userMapper.toUser(userDto);
+        return userMapper.toUserDto(userService.updateUser(userId, user));
     }
 
     @DeleteMapping("/{userId}")

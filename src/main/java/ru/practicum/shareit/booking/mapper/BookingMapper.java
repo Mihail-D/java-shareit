@@ -13,6 +13,18 @@ import javax.inject.Singleton;
 @Mapper
 public class BookingMapper {
 
+    private static BookingMapper instance;
+
+    private BookingMapper() {
+    }
+
+    public static BookingMapper getInstance() {
+        if (instance == null) {
+            instance = new BookingMapper();
+        }
+        return instance;
+    }
+
     public BookingDto toBookingDto(Booking booking) {
         return new BookingDto(
                 booking.getId(),

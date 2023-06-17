@@ -7,7 +7,15 @@ import ru.practicum.shareit.request.model.ItemRequest;
 @Mapper
 public class ItemRequestMapper {
 
-    public ItemRequestMapper() {
+    private static ItemRequestMapper instance;
+
+    private ItemRequestMapper() {}
+
+    public static synchronized ItemRequestMapper getInstance() {
+        if (instance == null) {
+            instance = new ItemRequestMapper();
+        }
+        return instance;
     }
 
     public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {

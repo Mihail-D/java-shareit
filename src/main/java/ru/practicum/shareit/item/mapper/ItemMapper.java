@@ -14,7 +14,18 @@ import java.util.List;
 @Mapper
 public class ItemMapper {
 
-    public static ItemDto toItemDto(Item item) {
+    private static ItemMapper instance;
+
+    private ItemMapper() {}
+
+    public static synchronized ItemMapper getInstance() {
+        if (instance == null) {
+            instance = new ItemMapper();
+        }
+        return instance;
+    }
+
+    public ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
                 item.getName(),
@@ -24,7 +35,7 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(ItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -33,7 +44,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemDto> toItemDtoList(List<Item> items) {
+    public List<ItemDto> toItemDtoList(List<Item> items) {
         List<ItemDto> list = new ArrayList<>();
         for (Item item : items) {
             ItemDto itemDto = toItemDto(item);
@@ -42,3 +53,4 @@ public class ItemMapper {
         return list;
     }
 }
+

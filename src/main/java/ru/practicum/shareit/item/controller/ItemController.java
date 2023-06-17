@@ -19,11 +19,12 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemMapper itemMapper = ItemMapper.getInstance();
 
     @GetMapping
     public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
         log.debug("Выполнено getAllItems with {}.", userId);
-        List<ItemDto> items = ItemMapper.toItemDtoList(itemService.getAllItems(userId));
+        List<ItemDto> items = itemMapper.toItemDtoList(itemService.getAllItems(userId));
         log.debug("Executed getAllItems with {}.", items);
         return items;
     }
@@ -31,7 +32,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
         log.debug("Executed getItemById with {}.", itemId);
-        ItemDto item = ItemMapper.toItemDto(itemService.getItemById(userId, itemId));
+        ItemDto item = itemMapper.toItemDto(itemService.getItemById(userId, itemId));
         log.debug("Result getItemById with {}.", item);
         return item;
     }
@@ -43,7 +44,7 @@ public class ItemController {
             return Collections.emptyList();
         }
         log.debug("Executed findItemByParams with {}.", text);
-        List<ItemDto> items = ItemMapper.toItemDtoList(itemService.getItemsByText(text));
+        List<ItemDto> items = itemMapper.toItemDtoList(itemService.getItemsByText(text));
         log.debug("Result findItemByParams with {}.", items);
         return items;
     }
@@ -51,10 +52,10 @@ public class ItemController {
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
         log.debug("Executed createItem with {}.", itemDto);
-        Item item = ItemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDto);
         Long requestId = itemDto.getRequest();
         Item createdItem = itemService.createItem(userId, item, requestId);
-        ItemDto createdItemDto = ItemMapper.toItemDto(createdItem);
+        ItemDto createdItemDto = itemMapper.toItemDto(createdItem);
         log.debug("Result createItem with {}.", createdItemDto);
         return createdItemDto;
     }
@@ -66,10 +67,10 @@ public class ItemController {
             @RequestBody ItemDto itemDto
     ) {
         log.debug("Executed updateItem with {}.", itemDto);
-        Item item = ItemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDto);
         Long requestId = itemDto.getRequest();
         Item updatedItem = itemService.updateItem(userId, itemId, item, requestId);
-        ItemDto updatedItemDto = ItemMapper.toItemDto(updatedItem);
+        ItemDto updatedItemDto = itemMapper.toItemDto(updatedItem);
         log.debug("Result updateItem with {}.", updatedItemDto);
         return updatedItemDto;
     }

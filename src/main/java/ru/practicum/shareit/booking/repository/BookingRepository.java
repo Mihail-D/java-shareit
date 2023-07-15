@@ -1,21 +1,40 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookingRepository {
+@Repository
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findAllBookings();
+    List<Booking> findAllByBookerIdOrderByStartDesc(long bookerId);
 
-    Optional<Booking> findBookingById(Long bookingId);
+    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(long bookerId, LocalDateTime start, LocalDateTime end);
 
-    Booking createBooking(Booking booking);
+    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long bookerId, LocalDateTime dateTime);
 
-    Booking updateBooking(Booking booking) throws IllegalArgumentException;
+    List<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(long bookerId, LocalDateTime dateTime);
 
-    void deleteBookingById(Long bookingId);
+    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long bookerId, Status status);
 
-    boolean bookingExists(Long bookingId);
+    List<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
+
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartAsc(long ownerId, LocalDateTime start, LocalDateTime end);
+
+    List<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(long ownerId, LocalDateTime dateTime);
+
+    List<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(long ownerId, LocalDateTime dateTime);
+
+    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(long ownerId, Status status);
+
+    Optional<Booking> findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(long itemId, Status status, LocalDateTime dateTime);
+
+    Optional<Booking> findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(long itemId, Status status, LocalDateTime dateTime);
+
+    Optional<Booking> findFirstByItemIdAndBookerIdAndStatusAndEndBefore(long itemId, long bookerId, Status status, LocalDateTime dateTime);
 }

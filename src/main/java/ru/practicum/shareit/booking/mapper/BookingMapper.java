@@ -1,49 +1,61 @@
 package ru.practicum.shareit.booking.mapper;
 
-import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingOutDto;
+import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.user.UserMapper;
 
-import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
-@Singleton
-@Component
-@Mapper
 public class BookingMapper {
 
-    private static BookingMapper instance;
-
-    private BookingMapper() {
+    public static BookingOutDto returnBookingDto(Booking booking) {
+        BookingOutDto bookingOutDto = BookingOutDto.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .status(booking.getStatus())
+                .item(ItemMapper.returnItemDto(booking.getItem()))
+                .booker(UserMapper.returnUserDto(booking.getBooker()))
+                .build();
+        return bookingOutDto;
     }
 
-    public static BookingMapper getInstance() {
-        if (instance == null) {
-            instance = new BookingMapper();
+    public static BookingShortDto returnBookingShortDto(Booking booking) {
+        BookingShortDto bookingShortDto = BookingShortDto.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .bookerId(booking.getBooker().getId())
+                .build();
+        return bookingShortDto;
+    }
+
+    public static Booking returnBooking(BookingDto bookingDto) {
+
+        Booking booking = Booking.builder()
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .build();
+
+        if (bookingDto.getStatus() == null) {
+            booking.setStatus(Status.WAITING);
+        } else {
+            booking.setStatus(bookingDto.getStatus());
         }
-        return instance;
+        return booking;
     }
 
-    public BookingDto toBookingDto(Booking booking) {
-        return new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItem(),
-                booking.getBooker(),
-                booking.getStatus().toString()
-        );
-    }
+    public static List<BookingOutDto> returnBookingDtoList(Iterable<Booking> bookings) {
+        List<BookingOutDto> result = new ArrayList<>();
 
-    public Booking toBooking(BookingDto bookingDto) {
-        return new Booking(
-                bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
-                bookingDto.getItem(),
-                bookingDto.getBooker(),
-                BookingStatus.valueOf(bookingDto.getStatus())
-        );
+        for (Booking booking : bookings) {
+            result.add(returnBookingDto(booking));
+        }
+        return result;
     }
 }

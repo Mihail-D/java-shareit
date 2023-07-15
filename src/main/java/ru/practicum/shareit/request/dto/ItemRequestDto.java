@@ -1,18 +1,34 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.*;
+import java.time.LocalDate;
+
+/**
+ * TODO Sprint add-item-requests.
+ */
 
 @Data
-@AllArgsConstructor
+@Builder
 public class ItemRequestDto {
 
-    private Long id;
+    @Positive
+    private long id;
+
+    @NotNull(message = "Description cannot be empty or contain spaces.")
+    @NotBlank(message = "Name cannot be empty or contain spaces.")
+    @Size(max = 200, message = "The maximum length of the description should not exceed 200 characters")
     private String description;
-    private User creator;
-    private LocalDateTime created;
+
+    @Positive
+    @NotNull(message = "Description cannot be empty or contain spaces.")
+    private long requestor;
+
+    @NotNull
+    @PastOrPresent
+    private LocalDate created;
+
 }
 

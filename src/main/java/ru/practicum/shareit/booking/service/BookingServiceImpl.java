@@ -131,17 +131,17 @@ public class BookingServiceImpl implements BookingService {
         State bookingState = State.getEnumValue(state);
         switch (bookingState) {
             case ALL:
-                return bookingRepository.getAllByBookerIdOrderByStartDesc(userId);
+                return bookingRepository.getByBookerIdOrderByStartDesc(userId);
             case CURRENT:
-                return bookingRepository.getAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
+                return bookingRepository.getByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
             case PAST:
                 return bookingRepository.getAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
             case FUTURE:
                 return bookingRepository.getAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
             case WAITING:
-                return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                return bookingRepository.getByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
-                return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                return bookingRepository.getByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
             default:
                 return null;
         }

@@ -98,8 +98,8 @@ public class ItemServiceImpl implements ItemService {
 
         if (item.getOwner().getId() == userId) {
 
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
                  itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
@@ -135,8 +135,8 @@ public class ItemServiceImpl implements ItemService {
 
         for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId))) {
 
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
                 itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
@@ -190,7 +190,7 @@ public class ItemServiceImpl implements ItemService {
 
         LocalDateTime dateTime = LocalDateTime.now();
 
-        Optional<Booking> booking = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, Status.APPROVED, dateTime);
+        Optional<Booking> booking = bookingRepository.getFirstByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, Status.APPROVED, dateTime);
 
         if (booking.isEmpty()) {
             throw new ValidationException("User " + userId + " not booking this item " + itemId);

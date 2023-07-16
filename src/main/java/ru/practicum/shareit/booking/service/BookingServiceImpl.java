@@ -73,7 +73,6 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
     private Booking createBooking(BookingDto bookingDto, long userId) {
         Item item = getItem(bookingDto.getItemId());
         User user = getUser(userId);
@@ -88,7 +87,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setBooker(user);
         return booking;
     }
-
 
     private void validateBookingDates(Booking booking) {
         if (booking.getStart().isAfter(booking.getEnd())) {
@@ -112,7 +110,6 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
         return booking;
     }
-
 
     private void validateBookingApproval(long userId, long bookingId) {
         unionService.checkBooking(bookingId);

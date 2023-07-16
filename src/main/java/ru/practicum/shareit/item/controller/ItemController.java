@@ -23,25 +23,31 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(HEADER_USER) Long userId,
-                           @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody @Valid ItemDto itemDto
+    ) {
 
         log.info("User {}, add new item {}", userId, itemDto.getName());
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader(HEADER_USER) Long userId,
-                              @RequestBody ItemDto itemDto,
-                              @PathVariable Long itemId) {
+    public ItemDto updateItem(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody ItemDto itemDto,
+            @PathVariable Long itemId
+    ) {
 
         log.info("User {}, update item {}", userId, itemDto.getName());
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader(HEADER_USER) Long userId,
-                           @PathVariable Long itemId) {
+    public ItemDto getItem(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable Long itemId
+    ) {
         log.info("Get item {}", itemId);
         return itemService.getItemById(itemId, userId);
     }
@@ -61,9 +67,11 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader(HEADER_USER) Long userId,
-                                 @PathVariable Long itemId,
-                                 @RequestBody @Valid CommentDto commentDto) {
+    public CommentDto addComment(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable Long itemId,
+            @RequestBody @Valid CommentDto commentDto
+    ) {
 
         log.info("User {} add comment for Item {}", userId, itemId);
         return itemService.addComment(userId, itemId, commentDto);

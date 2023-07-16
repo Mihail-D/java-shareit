@@ -41,27 +41,54 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validateBooking(BookingDto bookingDto, long userId) {
-        unionService.checkItem(bookingDto.getItemId());
+        checkItemAndUser(bookingDto.getItemId(), userId);
+        Item item = getItem(bookingDto.getItemId());
+        User user = getUser(userId);
+        checkIfOwnerCanBook(item, user);
+        checkIfItemIsAvailable(item);
+    }
+
+    private void checkItemAndUser(long itemId, long userId) {
+        unionService.checkItem(itemId);
         unionService.checkUser(userId);
-        Item item = itemRepository.findById(bookingDto.getItemId()).get();
-        User user = userRepository.findById(userId).get();
+    }
+
+    private Item getItem(long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(Item.class, "Item not found"));
+    }
+
+    private User getUser(long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(User.class, "User not found"));
+    }
+
+    private void checkIfOwnerCanBook(Item item, User user) {
         if (item.getOwner().equals(user)) {
-            throw new NotFoundException(User.class, "Owner " + userId + " can't book his item");
+            throw new NotFoundException(User.class, "Owner " + user.getId() + " can't book his item");
         }
+    }
+
+    private void checkIfItemIsAvailable(Item item) {
         if (!item.getAvailable()) {
             throw new ValidationException("Item " + item.getId() + " is booked");
         }
     }
 
+
     private Booking createBooking(BookingDto bookingDto, long userId) {
-        Item item = itemRepository.findById(bookingDto.getItemId()).get();
-        User user = userRepository.findById(userId).get();
-        Booking booking = BookingMapper.returnBooking(bookingDto);
-        booking.setItem(item);
-        booking.setBooker(user);
+        Item item = getItem(bookingDto.getItemId());
+        User user = getUser(userId);
+        Booking booking = createAndSetBooking(bookingDto, item, user);
         validateBookingDates(booking);
         return booking;
     }
+
+    private Booking createAndSetBooking(BookingDto bookingDto, Item item, User user) {
+        Booking booking = BookingMapper.returnBooking(bookingDto);
+        booking.setItem(item);
+        booking.setBooker(user);
+        return booking;
+    }
+
 
     private void validateBookingDates(Booking booking) {
         if (booking.getStart().isAfter(booking.getEnd())) {
@@ -76,10 +103,16 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
         validateBookingApproval(userId, bookingId);
-        Booking booking = updateBookingStatus(bookingId, approved);
-        bookingRepository.save(booking);
+        Booking booking = updateAndSaveBookingStatus(bookingId, approved);
         return BookingMapper.returnBookingDto(booking);
     }
+
+    private Booking updateAndSaveBookingStatus(long bookingId, Boolean approved) {
+        Booking booking = updateBookingStatus(bookingId, approved);
+        bookingRepository.save(booking);
+        return booking;
+    }
+
 
     private void validateBookingApproval(long userId, long bookingId) {
         unionService.checkBooking(bookingId);

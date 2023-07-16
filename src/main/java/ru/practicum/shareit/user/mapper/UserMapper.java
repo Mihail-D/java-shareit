@@ -9,21 +9,19 @@ import java.util.List;
 public class UserMapper {
 
     public static UserDto returnUserDto(User user) {
-        UserDto userDto = UserDto.builder()
+        return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .build();
-        return userDto;
     }
 
     public static User returnUser(UserDto userDto) {
-        User user = User.builder()
+        return User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())
                 .name(userDto.getName())
                 .build();
-        return user;
     }
 
     public static List<UserDto> returnUserDtoList(Iterable<User> users) {

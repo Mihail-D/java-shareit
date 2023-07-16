@@ -7,5 +7,4 @@ public interface UnionService {
     void checkItem(Long itemId);
 
     void checkBooking(Long booking);
-
 }

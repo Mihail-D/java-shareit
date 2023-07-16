@@ -3,10 +3,10 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.enums.State;
-import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
+import ru.practicum.shareit.booking.enums.State;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -34,46 +34,63 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingOutDto addBooking(BookingDto bookingDto, long userId) {
+        validateBooking(bookingDto, userId);
+        Booking booking = createBooking(bookingDto, userId);
+        bookingRepository.save(booking);
+        return BookingMapper.returnBookingDto(booking);
+    }
 
+    private void validateBooking(BookingDto bookingDto, long userId) {
         unionService.checkItem(bookingDto.getItemId());
-        Item item = itemRepository.findById(bookingDto.getItemId()).get();
-
         unionService.checkUser(userId);
+        Item item = itemRepository.findById(bookingDto.getItemId()).get();
         User user = userRepository.findById(userId).get();
-
-        Booking booking = BookingMapper.returnBooking(bookingDto);
-        booking.setItem(item);
-        booking.setBooker(user);
-
         if (item.getOwner().equals(user)) {
             throw new NotFoundException(User.class, "Owner " + userId + " can't book his item");
         }
         if (!item.getAvailable()) {
             throw new ValidationException("Item " + item.getId() + " is booked");
         }
+    }
+
+    private Booking createBooking(BookingDto bookingDto, long userId) {
+        Item item = itemRepository.findById(bookingDto.getItemId()).get();
+        User user = userRepository.findById(userId).get();
+        Booking booking = BookingMapper.returnBooking(bookingDto);
+        booking.setItem(item);
+        booking.setBooker(user);
+        validateBookingDates(booking);
+        return booking;
+    }
+
+    private void validateBookingDates(Booking booking) {
         if (booking.getStart().isAfter(booking.getEnd())) {
             throw new ValidationException("Start cannot be later than end");
         }
         if (booking.getStart().isEqual(booking.getEnd())) {
             throw new ValidationException("Start cannot be equal than end");
         }
-
-        bookingRepository.save(booking);
-
-        return BookingMapper.returnBookingDto(booking);
     }
 
     @Transactional
     @Override
     public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
+        validateBookingApproval(userId, bookingId);
+        Booking booking = updateBookingStatus(bookingId, approved);
+        bookingRepository.save(booking);
+        return BookingMapper.returnBookingDto(booking);
+    }
 
+    private void validateBookingApproval(long userId, long bookingId) {
         unionService.checkBooking(bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
-
         if (booking.getItem().getOwner().getId() != userId) {
             throw new NotFoundException(User.class, "Only owner " + userId + " items can change booking status");
         }
+    }
 
+    private Booking updateBookingStatus(long bookingId, Boolean approved) {
+        Booking booking = bookingRepository.findById(bookingId).get();
         if (approved) {
             if (booking.getStatus().equals(Status.APPROVED)) {
                 throw new ValidationException("Incorrect status update request");
@@ -82,23 +99,22 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-
-        bookingRepository.save(booking);
-        return BookingMapper.returnBookingDto(booking);
+        return booking;
     }
 
     @Transactional(readOnly = true)
     @Override
     public BookingOutDto getBookingById(long userId, long bookingId) {
-
-        unionService.checkBooking(bookingId);
+        validateBookingAccess(userId, bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
+        return BookingMapper.returnBookingDto(booking);
+    }
 
+    private void validateBookingAccess(long userId, long bookingId) {
+        unionService.checkBooking(bookingId);
         unionService.checkUser(userId);
-
-        if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
-            return BookingMapper.returnBookingDto(booking);
-        } else {
+        Booking booking = bookingRepository.findById(bookingId).get();
+        if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
             throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
         }
     }
@@ -106,72 +122,64 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingOutDto> getAllBookingsByBookerId(long userId, String state) {
-
         unionService.checkUser(userId);
+        List<Booking> bookings = getBookingsByState(userId, state);
+        return BookingMapper.returnBookingDtoList(bookings);
+    }
 
-        List<Booking> bookings = null;
-
+    private List<Booking> getBookingsByState(long userId, String state) {
         State bookingState = State.getEnumValue(state);
-
         switch (bookingState) {
             case ALL:
-                bookings = bookingRepository.getAllByBookerIdOrderByStartDesc(userId);
-                break;
+                return bookingRepository.getAllByBookerIdOrderByStartDesc(userId);
             case CURRENT:
-                bookings = bookingRepository.getAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
             case PAST:
-                bookings = bookingRepository.getAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
             case FUTURE:
-                bookings = bookingRepository.getAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
             case WAITING:
-                bookings = bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
-                break;
+                return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
-                bookings = bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
-                break;
-
+                return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+            default:
+                return null;
         }
-        return BookingMapper.returnBookingDtoList(bookings);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(long userId, String state) {
+        validateOwner(userId);
+        List<Booking> bookings = getBookingsByStateForOwner(userId, state);
+        return BookingMapper.returnBookingDtoList(bookings);
+    }
 
+    private void validateOwner(long userId) {
         unionService.checkUser(userId);
-
         if (itemRepository.findByOwnerId(userId).isEmpty()) {
             throw new ValidationException("User does not have items to booking");
         }
+    }
 
-        List<Booking> bookings = null;
-
+    private List<Booking> getBookingsByStateForOwner(long userId, String state) {
         State bookingState = State.getEnumValue(state);
-
         switch (bookingState) {
             case ALL:
-                bookings = bookingRepository.getAllByItemOwnerIdOrderByStartDesc(userId);
-                break;
+                return bookingRepository.getAllByItemOwnerIdOrderByStartDesc(userId);
             case CURRENT:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartAsc(userId, LocalDateTime.now(), LocalDateTime.now());
             case PAST:
-                bookings = bookingRepository.getAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
             case FUTURE:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
-                break;
+                return bookingRepository.getAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
             case WAITING:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
-                break;
+                return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
-                break;
+                return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+            default:
+                return null;
         }
-        return BookingMapper.returnBookingDtoList(bookings);
     }
 }
 

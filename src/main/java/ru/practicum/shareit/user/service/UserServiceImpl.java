@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.EmailExistException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -19,22 +20,23 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UnionService unionService;
+    private final UserMapper userMapper = UserMapper.getInstance();
 
     @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = userMapper.returnUser(userDto);
         userRepository.save(user);
 
-        return UserMapper.returnUserDto(user);
+        return userMapper.returnUserDto(user);
     }
 
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = userMapper.returnUser(userDto);
         user.setId(userId);
 
         unionService.checkUser(userId);
@@ -55,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(newUser);
 
-        return UserMapper.returnUserDto(newUser);
+        return userMapper.returnUserDto(newUser);
     }
 
     @Transactional
@@ -71,13 +73,13 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(long userId) {
 
         unionService.checkUser(userId);
-        return UserMapper.returnUserDto(userRepository.findById(userId).get());
+        return userMapper.returnUserDto(userRepository.findById(userId).get());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
 
-        return UserMapper.returnUserDtoList(userRepository.findAll());
+        return userMapper.returnUserDtoList(userRepository.findAll());
     }
 }

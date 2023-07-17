@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 public class BookingMapper {
 
     private static BookingMapper instance = new BookingMapper();
+    private final ItemMapper itemMapper = ItemMapper.getInstance();
 
     BookingMapper() {
     }
@@ -63,7 +64,7 @@ public class BookingMapper {
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus())
-                .item(ItemMapper.returnItemDto(booking.getItem()))
+                .item(itemMapper.returnItemDto(booking.getItem()))
                 .booker(UserMapper.returnUserDto(booking.getBooker()))
                 .build();
     }

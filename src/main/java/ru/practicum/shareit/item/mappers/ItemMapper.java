@@ -28,7 +28,7 @@ public class ItemMapper {
         return instance;
     }
 
-    public static ItemDto returnItemDto(Item item) {
+    public ItemDto returnItemDto(Item item) {
 
         return ItemDto.builder()
                 .id(item.getId())
@@ -38,7 +38,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item returnItem(ItemDto itemDto, User user) {
+    public Item returnItem(ItemDto itemDto, User user) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -48,7 +48,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemDto> returnItemDtoList(Iterable<Item> items) {
+    public List<ItemDto> returnItemDtoList(Iterable<Item> items) {
         List<ItemDto> result = new ArrayList<>();
 
         for (Item item : items) {

@@ -49,11 +49,11 @@ public class ItemServiceImpl implements ItemService {
 
         User user = userRepository.findById(userId).get();
 
-        Item item = ItemMapper.returnItem(itemDto, user);
+        Item item = itemMapper.returnItem(itemDto, user);
 
         itemRepository.save(item);
 
-        return ItemMapper.returnItemDto(item);
+        return itemMapper.returnItemDto(item);
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).get();
 
         unionService.checkItem(itemId);
-        Item item = ItemMapper.returnItem(itemDto, user);
+        Item item = itemMapper.returnItem(itemDto, user);
 
         item.setId(itemId);
 
@@ -88,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.save(newItem);
 
-        return ItemMapper.returnItemDto(newItem);
+        return itemMapper.returnItemDto(newItem);
     }
 
     @Transactional(readOnly = true)
@@ -98,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkItem(itemId);
         Item item = itemRepository.findById(itemId).get();
 
-        ItemDto itemDto = ItemMapper.returnItemDto(item);
+        ItemDto itemDto = itemMapper.returnItemDto(item);
 
         unionService.checkUser(userId);
 
@@ -139,7 +139,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemDto> resultList = new ArrayList<>();
 
-        for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId))) {
+        for (ItemDto itemDto : itemMapper.returnItemDtoList(itemRepository.findByOwnerId(userId))) {
 
             Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
@@ -180,7 +180,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.equals("")) {
             return Collections.emptyList();
         } else {
-            return ItemMapper.returnItemDtoList(itemRepository.search(text));
+            return itemMapper.returnItemDtoList(itemRepository.search(text));
         }
     }
 

@@ -16,6 +16,20 @@
 
     <name>ShareIt</name>
 
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>plugins-releases</name>
+            <url>http://serverip:8081/artifactory/plugins-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>plugins-snapshot</name>
+            <url>http://serverip:8081/artifactory/plugins-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
     <properties>
         <java.version>11</java.version>
     </properties>

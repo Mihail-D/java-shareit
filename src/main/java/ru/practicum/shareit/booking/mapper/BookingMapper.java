@@ -22,6 +22,7 @@ public class BookingMapper {
 
     private static BookingMapper instance = new BookingMapper();
     private final ItemMapper itemMapper = ItemMapper.getInstance();
+    private final UserMapper userMapper = UserMapper.getInstance();
 
     BookingMapper() {
     }
@@ -32,7 +33,6 @@ public class BookingMapper {
         }
         return instance;
     }
-
 
     public Booking returnBooking(BookingDto bookingDto) {
         Status status = bookingDto.getStatus() == null ? Status.WAITING : bookingDto.getStatus();
@@ -65,9 +65,8 @@ public class BookingMapper {
                 .end(booking.getEnd())
                 .status(booking.getStatus())
                 .item(itemMapper.returnItemDto(booking.getItem()))
-                .booker(UserMapper.returnUserDto(booking.getBooker()))
+                .booker(userMapper.returnUserDto(booking.getBooker()))
                 .build();
     }
-
 }
 

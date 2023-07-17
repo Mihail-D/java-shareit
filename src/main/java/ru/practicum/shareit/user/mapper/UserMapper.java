@@ -28,7 +28,7 @@ public class UserMapper {
         return instance;
     }
 
-    public static UserDto returnUserDto(User user) {
+    public UserDto returnUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -36,7 +36,7 @@ public class UserMapper {
                 .build();
     }
 
-    public User returnUser(UserDto userDto) {
+    public  User returnUser(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())

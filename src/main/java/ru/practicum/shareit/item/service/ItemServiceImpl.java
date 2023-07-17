@@ -38,6 +38,8 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final UnionService unionService;
     private final BookingMapper bookingMapper = BookingMapper.getInstance();
+    private final CommentMapper commentMapper = CommentMapper.getInstance();
+    private final ItemMapper itemMapper = ItemMapper.getInstance();
 
     @Transactional
     @Override
@@ -121,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
         List<Comment> commentList = commentRepository.findAllByItemId(itemId);
 
         if (!commentList.isEmpty()) {
-            itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+            itemDto.setComments(commentMapper.returnICommentDtoList(commentList));
         } else {
             itemDto.setComments(Collections.emptyList());
         }
@@ -162,7 +164,7 @@ public class ItemServiceImpl implements ItemService {
             List<Comment> commentList = commentRepository.findAllByItemId(itemDto.getId());
 
             if (!commentList.isEmpty()) {
-                itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+                itemDto.setComments(commentMapper.returnICommentDtoList(commentList));
             } else {
                 itemDto.setComments(Collections.emptyList());
             }
@@ -200,9 +202,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("User " + userId + " not booking this item " + itemId);
         }
 
-        Comment comment = CommentMapper.returnComment(commentDto, item, user, dateTime);
+        Comment comment = commentMapper.returnComment(commentDto, item, user, dateTime);
         commentRepository.save(comment);
 
-        return CommentMapper.returnCommentDto(comment);
+        return commentMapper.returnCommentDto(comment);
     }
 }

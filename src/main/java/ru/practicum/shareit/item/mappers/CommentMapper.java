@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.mappers;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -17,9 +18,19 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public class CommentMapper {
 
+    private static CommentMapper instance = new CommentMapper();
 
+    CommentMapper() {
+    }
 
-    public static CommentDto returnCommentDto(Comment comment) {
+    public static CommentMapper getInstance() {
+        if (instance == null) {
+            instance = new CommentMapper();
+        }
+        return instance;
+    }
+
+    public CommentDto returnCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -28,7 +39,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static Comment returnComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
+    public Comment returnComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .created(dateTime)
@@ -37,7 +48,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> returnICommentDtoList(Iterable<Comment> comments) {
+    public List<CommentDto> returnICommentDtoList(Iterable<Comment> comments) {
         List<CommentDto> result = new ArrayList<>();
 
         for (Comment comment : comments) {

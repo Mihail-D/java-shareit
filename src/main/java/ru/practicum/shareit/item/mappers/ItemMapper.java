@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.mappers;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -14,6 +15,18 @@ import java.util.List;
 @Singleton
 @Mapper(componentModel = "spring")
 public class ItemMapper {
+
+    private static ItemMapper instance = new ItemMapper();
+
+    ItemMapper() {
+    }
+
+    public static ItemMapper getInstance() {
+        if (instance == null) {
+            instance = new ItemMapper();
+        }
+        return instance;
+    }
 
     public static ItemDto returnItemDto(Item item) {
 

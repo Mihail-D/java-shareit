@@ -1,11 +1,17 @@
 package ru.practicum.shareit.user.mapper;
 
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@Singleton
+@Mapper(componentModel = "spring")
 public class UserMapper {
 
     public static UserDto returnUserDto(User user) {

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.enums.Status;
@@ -38,9 +37,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final UnionService unionService;
-
-
-
+    private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     @Transactional
     @Override
@@ -109,13 +106,13 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+                itemDto.setLastBooking(bookingMapper.returnBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
 
             if (nextBooking.isPresent()) {
-                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+                itemDto.setNextBooking(bookingMapper.returnBookingShortDto(nextBooking.get()));
             } else {
                 itemDto.setNextBooking(null);
             }
@@ -146,13 +143,13 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+                itemDto.setLastBooking(bookingMapper.returnBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
 
             if (nextBooking.isPresent()) {
-                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+                itemDto.setNextBooking(bookingMapper.returnBookingShortDto(nextBooking.get()));
             } else {
                 itemDto.setNextBooking(null);
             }

@@ -30,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UnionService unionService;
+    private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     @Transactional
     @Override
@@ -37,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
         validateBooking(bookingDto, userId);
         Booking booking = createBooking(bookingDto, userId);
         bookingRepository.save(booking);
-        return BookingMapper.returnBookingDto(booking);
+        return bookingMapper.returnBookingDto(booking);
     }
 
     private void validateBooking(BookingDto bookingDto, long userId) {
@@ -82,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking createAndSetBooking(BookingDto bookingDto, Item item, User user) {
-        Booking booking = BookingMapper.returnBooking(bookingDto);
+        Booking booking = bookingMapper.returnBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(user);
         return booking;
@@ -102,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
         validateBookingApproval(userId, bookingId);
         Booking booking = updateAndSaveBookingStatus(bookingId, approved);
-        return BookingMapper.returnBookingDto(booking);
+        return bookingMapper.returnBookingDto(booking);
     }
 
     private Booking updateAndSaveBookingStatus(long bookingId, Boolean approved) {
@@ -137,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingOutDto getBookingById(long userId, long bookingId) {
         validateBookingAccess(userId, bookingId);
         Booking booking = bookingRepository.findById(bookingId).get();
-        return BookingMapper.returnBookingDto(booking);
+        return bookingMapper.returnBookingDto(booking);
     }
 
     private void validateBookingAccess(long userId, long bookingId) {
@@ -154,7 +155,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> getAllBookingsByBookerId(long userId, String state) {
         unionService.checkUser(userId);
         List<Booking> bookings = getBookingsByState(userId, state);
-        return BookingMapper.returnBookingDtoList(bookings);
+        return bookingMapper.returnBookingDtoList(bookings);
     }
 
     private List<Booking> getBookingsByState(long userId, String state) {
@@ -182,7 +183,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(long userId, String state) {
         validateOwner(userId);
         List<Booking> bookings = getBookingsByStateForOwner(userId, state);
-        return BookingMapper.returnBookingDtoList(bookings);
+        return bookingMapper.returnBookingDtoList(bookings);
     }
 
     private void validateOwner(long userId) {

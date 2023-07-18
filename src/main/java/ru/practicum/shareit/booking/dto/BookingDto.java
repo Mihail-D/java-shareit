@@ -1,20 +1,27 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.booking.enums.Status;
 
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class BookingDto {
 
-    private Long id;
+    private Long itemId;
+
+    @NotNull(message = "start cannot be empty.")
+    @FutureOrPresent(message = "start may be in the present or future")
     private LocalDateTime start;
+
+    @NotNull(message = "end cannot be empty.")
+    @Future(message = "end may be in the future")
     private LocalDateTime end;
-    private Item item;
-    private User booker;
-    private String status;
+
+    private Status status;
 }

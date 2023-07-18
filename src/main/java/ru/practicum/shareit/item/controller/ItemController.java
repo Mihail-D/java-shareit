@@ -2,82 +2,78 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
-@RestController
-@RequestMapping("/items")
-@RequiredArgsConstructor
+import static ru.practicum.shareit.util.Constant.HEADER_USER;
+
 @Slf4j
+@Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/items")
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemMapper itemMapper = ItemMapper.getInstance();
-
-    @GetMapping
-    public List<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.debug("Executed getAllItems with {}.", userId);
-        List<ItemDto> items = itemMapper.toItemDtoList(itemService.getAllItems(userId));
-        log.debug("Executed getAllItems with {}.", items);
-        return items;
-    }
-
-    @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
-        log.debug("Executed getItemById with {}.", itemId);
-        ItemDto item = itemMapper.toItemDto(itemService.getItemById(userId, itemId));
-        log.debug("Result getItemById with {}.", item);
-        return item;
-    }
-
-    @GetMapping("/search")
-    public List<ItemDto> findItemByParams(@RequestParam(required = false) String text) {
-        if (text == null || text.isBlank()) {
-            log.debug("Executed findItemByParams text not found.");
-            return Collections.emptyList();
-        }
-        log.debug("Executed findItemByParams with {}.", text);
-        List<ItemDto> items = itemMapper.toItemDtoList(itemService.getItemsByText(text));
-        log.debug("Result findItemByParams with {}.", items);
-        return items;
-    }
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
-        log.debug("Executed createItem with {}.", itemDto);
-        Item item = itemMapper.toItem(itemDto);
-        Long requestId = itemDto.getRequest();
-        Item createdItem = itemService.createItem(userId, item, requestId);
-        ItemDto createdItemDto = itemMapper.toItemDto(createdItem);
-        log.debug("Result createItem with {}.", createdItemDto);
-        return createdItemDto;
+    public ItemDto addItem(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody @Valid ItemDto itemDto
+    ) {
+
+        log.info("User {}, add new item {}", userId, itemDto.getName());
+        return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
-            @PathVariable Long itemId,
-            @RequestBody ItemDto itemDto
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody ItemDto itemDto,
+            @PathVariable Long itemId
     ) {
-        log.debug("Executed updateItem with {}.", itemDto);
-        Item item = itemMapper.toItem(itemDto);
-        Long requestId = itemDto.getRequest();
-        Item updatedItem = itemService.updateItem(userId, itemId, item, requestId);
-        ItemDto updatedItemDto = itemMapper.toItemDto(updatedItem);
-        log.debug("Result updateItem with {}.", updatedItemDto);
-        return updatedItemDto;
+
+        log.info("User {}, update item {}", userId, itemDto.getName());
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
-    @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
-        log.debug("Executed deleteItem with {}.", itemId);
-        itemService.deleteItemById(userId, itemId);
+    @GetMapping("/{itemId}")
+    public ItemDto getItem(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable Long itemId
+    ) {
+        log.info("Get item {}", itemId);
+        return itemService.getItemById(itemId, userId);
+    }
+
+    @GetMapping
+    public List<ItemDto> getAllItemsUser(@RequestHeader(HEADER_USER) Long userId) {
+
+        log.info("List items User {}", userId);
+        return itemService.getItemsUser(userId);
+    }
+
+    @GetMapping("/search")
+    public List<ItemDto> getSearchItem(String text) {
+
+        log.info("Get item with key substring {}", text);
+        return itemService.searchItem(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable Long itemId,
+            @RequestBody @Valid CommentDto commentDto
+    ) {
+
+        log.info("User {} add comment for Item {}", userId, itemId);
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }

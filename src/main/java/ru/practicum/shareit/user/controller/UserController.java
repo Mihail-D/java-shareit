@@ -4,53 +4,53 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.Create;
-import ru.practicum.shareit.user.dto.Update;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequestMapping(path = "/users")
-@RequiredArgsConstructor
 @Slf4j
+@Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(path = "/users")
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper = UserMapper.getInstance();
-
-    @GetMapping
-    public List<UserDto> findAllUsers() {
-        log.debug("UserController: findAllUsers executed.");
-        return userMapper.toUserDtoList(userService.findAllUsers());
-    }
-
-    @GetMapping("/{userId}")
-    public UserDto findUserById(@PathVariable Long userId) {
-        log.debug("UserController: findUserById executed with {}.", userId);
-        return userMapper.toUserDto(userService.findUserById(userId));
-    }
 
     @PostMapping
-    public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        log.debug("UserController: createUser executed with {}.", userDto);
-        User user = userMapper.toUser(userDto);
-        return userMapper.toUserDto(userService.createUser(user));
+    public UserDto addUser(@RequestBody @Valid UserDto userDto) {
+
+        log.info("Add User {} ", userDto.getId());
+        return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@PathVariable Long userId, @Validated(Update.class) @RequestBody UserDto userDto) {
-        log.debug("UserController: updateUser executed with {}.", userDto);
-        User user = userMapper.toUser(userDto);
-        return userMapper.toUserDto(userService.updateUser(userId, user));
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
+
+        log.info("Update User {} ", userDto.getId());
+        return userService.updateUser(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable Long userId) {
-        log.debug("UserController: deleteUserById executed with {}.", userId);
-        userService.deleteUserById(userId);
+    public void deleteUser(@PathVariable Long userId) {
+
+        log.info("User {} deleted ", userId);
+        userService.deleteUser(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId) {
+
+        log.info("Get User {} ", userId);
+        return userService.getUserById(userId);
+    }
+
+    @GetMapping
+    public List<UserDto> getAllUsers() {
+
+        log.info("List all Users");
+        return userService.getAllUsers();
     }
 }

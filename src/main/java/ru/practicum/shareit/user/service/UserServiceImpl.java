@@ -1,77 +1,85 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.AlreadyExistsException;
-import ru.practicum.shareit.exception.NotFoundException;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.EmailExistException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.util.UnionService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
+@Transactional(readOnly = true)
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UnionService unionService;
 
+    @Transactional
     @Override
-    public List<User> findAllUsers() {
-        log.debug("UserService: executed findAllUsers.");
-        return userRepository.findAllUsers();
+    public UserDto addUser(UserDto userDto) {
+
+        User user = UserMapper.returnUser(userDto);
+        userRepository.save(user);
+
+        return UserMapper.toUserDto(user);
     }
 
+    @Transactional
     @Override
-    public User findUserById(Long id) {
-        User user = userRepository.findUserById(id).orElseThrow(
-                () -> new NotFoundException(User.class.toString(), id)
-        );
-        log.debug("UserService: executed findUserById with {}.", user);
-        return user;
-    }
+    public UserDto updateUser(UserDto userDto, long userId) {
+        User user = UserMapper.returnUser(userDto);
+        user.setId(userId);
+        unionService.checkUser(userId);
 
-    @Override
-    public User createUser(User user) {
-        if (user.getId() != null && userRepository.userExists(user.getId())) {
-            throw new AlreadyExistsException(User.class.toString(), user.getId());
-        }
-        if (userRepository.findAllUsers().contains(user)) {
-            throw new AlreadyExistsException(User.class.toString(), user.getEmail());
-        }
-        user = userRepository.createUser(user);
-        log.debug("UserService: executed createUser with {}.", user);
-        return user;
-    }
+        User newUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
 
-    @Override
-    public User updateUser(Long userId, User user) {
-        if (!userRepository.userExists(userId)) {
-            throw new NotFoundException(User.class.toString(), userId);
-        }
-        User oldUser = findUserById(userId);
-        Optional<User> emailUser = userRepository.findUserByEmail(user.getEmail());
-        if (emailUser.isPresent() && !emailUser.get().getId().equals(userId)) {
-            throw new AlreadyExistsException(User.class.toString(), user.getEmail());
-        }
         if (user.getName() != null) {
-            oldUser.setName(user.getName());
+            newUser.setName(user.getName());
         }
+
         if (user.getEmail() != null) {
-            oldUser.setEmail(user.getEmail());
+            List<User> findEmail = userRepository.findByEmail(user.getEmail());
+            if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
+                throw new EmailExistException("There is already a user with an email " + user.getEmail());
+            }
+            newUser.setEmail(user.getEmail());
         }
-        log.debug("UserService: executed updateUser with {}.", user);
-        return userRepository.updateUser(userId, oldUser);
+
+        userRepository.save(newUser);
+        return UserMapper.toUserDto(newUser);
     }
 
+    @Transactional
     @Override
-    public void deleteUserById(Long userId) {
-        if (!userRepository.userExists(userId)) {
-            throw new NotFoundException(User.class.toString(), userId);
-        }
-        userRepository.deleteUserById(userId);
-        log.debug("UserService: executed deleteUserById with ID {}.", userId);
+    public void deleteUser(long userId) {
+
+        unionService.checkUser(userId);
+        userRepository.deleteById(userId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDto getUserById(long userId) {
+        unionService.checkUser(userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
+
+        return UserMapper.toUserDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserDto> getAllUsers() {
+
+        return UserMapper.toUserDtoList(userRepository.findAll());
     }
 }

@@ -1,46 +1,39 @@
 package ru.practicum.shareit.user.mapper;
 
+import lombok.experimental.UtilityClass;
 import org.mapstruct.Mapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Mapper
+@UtilityClass
+@Mapper(componentModel = "spring")
 public class UserMapper {
 
-    private static UserMapper instance;
-
-    private UserMapper() {
+    public static UserDto toUserDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
     }
 
-    public static synchronized UserMapper getInstance() {
-        if (instance == null) {
-            instance = new UserMapper();
+    public static User returnUser(UserDto userDto) {
+        return User.builder()
+                .id(userDto.getId())
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .build();
+    }
+
+    public static List<UserDto> toUserDtoList(Iterable<User> users) {
+        List<UserDto> result = new ArrayList<>();
+
+        for (User user : users) {
+            result.add(toUserDto(user));
         }
-        return instance;
-    }
-
-    public UserDto toUserDto(User user) {
-        return new UserDto(
-                user.getId(),
-                user.getEmail(),
-                user.getName()
-        );
-    }
-
-    public User toUser(UserDto userDto) {
-        return new User(
-                userDto.getId(),
-                userDto.getEmail(),
-                userDto.getName()
-        );
-    }
-
-    public List<UserDto> toUserDtoList(List<User> users) {
-        return users.stream()
-                .map(this::toUserDto)
-                .collect(Collectors.toList());
+        return result;
     }
 }

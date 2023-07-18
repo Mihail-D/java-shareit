@@ -15,19 +15,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public class ItemMapper {
 
-    private static ItemMapper instance = new ItemMapper();
-
-    ItemMapper() {
-    }
-
-    public static ItemMapper getInstance() {
-        if (instance == null) {
-            instance = new ItemMapper();
-        }
-        return instance;
-    }
-
-    public ItemDto returnItemDto(Item item) {
+    public static ItemDto toItemDto(Item item) {
 
         return ItemDto.builder()
                 .id(item.getId())
@@ -37,7 +25,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public Item returnItem(ItemDto itemDto, User user) {
+    public static Item toItem(ItemDto itemDto, User user) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -47,11 +35,11 @@ public class ItemMapper {
                 .build();
     }
 
-    public List<ItemDto> returnItemDtoList(Iterable<Item> items) {
+    public static List<ItemDto> toItemDtoList(Iterable<Item> items) {
         List<ItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
-            result.add(returnItemDto(item));
+            result.add(toItemDto(item));
         }
         return result;
     }

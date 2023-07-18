@@ -14,19 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public class UserMapper {
 
-    private static UserMapper instance = new UserMapper();
-
-    UserMapper() {
-    }
-
-    public static UserMapper getInstance() {
-        if (instance == null) {
-            instance = new UserMapper();
-        }
-        return instance;
-    }
-
-    public UserDto returnUserDto(User user) {
+    public static UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -34,7 +22,7 @@ public class UserMapper {
                 .build();
     }
 
-    public  User returnUser(UserDto userDto) {
+    public static User returnUser(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())
@@ -42,11 +30,11 @@ public class UserMapper {
                 .build();
     }
 
-    public List<UserDto> returnUserDtoList(Iterable<User> users) {
+    public static List<UserDto> toUserDtoList(Iterable<User> users) {
         List<UserDto> result = new ArrayList<>();
 
         for (User user : users) {
-            result.add(returnUserDto(user));
+            result.add(toUserDto(user));
         }
         return result;
     }

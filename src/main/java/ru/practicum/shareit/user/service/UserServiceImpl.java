@@ -20,22 +20,21 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UnionService unionService;
-    private final UserMapper userMapper = UserMapper.getInstance();
 
     @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = userMapper.returnUser(userDto);
+        User user = UserMapper.returnUser(userDto);
         userRepository.save(user);
 
-        return userMapper.returnUserDto(user);
+        return UserMapper.toUserDto(user);
     }
 
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
-        User user = userMapper.returnUser(userDto);
+        User user = UserMapper.returnUser(userDto);
         user.setId(userId);
         unionService.checkUser(userId);
 
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(newUser);
-        return userMapper.returnUserDto(newUser);
+        return UserMapper.toUserDto(newUser);
     }
 
     @Transactional
@@ -74,13 +73,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
 
-        return userMapper.returnUserDto(user);
+        return UserMapper.toUserDto(user);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
 
-        return userMapper.returnUserDtoList(userRepository.findAll());
+        return UserMapper.toUserDtoList(userRepository.findAll());
     }
 }

@@ -17,19 +17,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public class CommentMapper {
 
-    private static CommentMapper instance = new CommentMapper();
-
-    CommentMapper() {
-    }
-
-    public static CommentMapper getInstance() {
-        if (instance == null) {
-            instance = new CommentMapper();
-        }
-        return instance;
-    }
-
-    public CommentDto returnCommentDto(Comment comment) {
+    public static CommentDto toCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -38,7 +26,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public Comment returnComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
+    public static Comment toComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .created(dateTime)
@@ -47,11 +35,11 @@ public class CommentMapper {
                 .build();
     }
 
-    public List<CommentDto> returnICommentDtoList(Iterable<Comment> comments) {
+    public static List<CommentDto> toCommentDtoList(Iterable<Comment> comments) {
         List<CommentDto> result = new ArrayList<>();
 
         for (Comment comment : comments) {
-            result.add(returnCommentDto(comment));
+            result.add(toCommentDto(comment));
         }
         return result;
     }

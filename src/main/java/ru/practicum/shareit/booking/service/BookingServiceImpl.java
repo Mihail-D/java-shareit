@@ -20,6 +20,7 @@ import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,7 +31,6 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final UnionService unionService;
-    private final BookingMapper bookingMapper = BookingMapper.getInstance();
 
     @Transactional
     @Override
@@ -38,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
         validateBooking(bookingDto, userId);
         Booking booking = createBooking(bookingDto, userId);
         bookingRepository.save(booking);
-        return bookingMapper.returnBookingDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     private void validateBooking(BookingDto bookingDto, long userId) {
@@ -83,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking createAndSetBooking(BookingDto bookingDto, Item item, User user) {
-        Booking booking = bookingMapper.returnBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(user);
         return booking;
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
         validateBookingApproval(userId, bookingId);
         Booking booking = updateAndSaveBookingStatus(bookingId, approved);
-        return bookingMapper.returnBookingDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     private Booking updateAndSaveBookingStatus(long bookingId, Boolean approved) {
@@ -114,48 +114,73 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateBookingApproval(long userId, long bookingId) {
         unionService.checkBooking(bookingId);
-        Booking booking = bookingRepository.findById(bookingId).get();
-        if (booking.getItem().getOwner().getId() != userId) {
-            throw new NotFoundException(User.class, "Only owner " + userId + " items can change booking status");
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            if (booking.getItem().getOwner().getId() != userId) {
+                throw new NotFoundException(User.class, "Only owner " + userId + " items can change booking status");
+            }
+        } else {
+            throw new NotFoundException(Booking.class, "Booking not found with id: " + bookingId);
         }
     }
 
+
     private Booking updateBookingStatus(long bookingId, Boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId).get();
-        if (approved) {
-            if (booking.getStatus().equals(Status.APPROVED)) {
-                throw new ValidationException("Incorrect status update request");
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            if (approved) {
+                if (booking.getStatus().equals(Status.APPROVED)) {
+                    throw new ValidationException("Incorrect status update request");
+                }
+                booking.setStatus(Status.APPROVED);
+            } else {
+                booking.setStatus(Status.REJECTED);
             }
-            booking.setStatus(Status.APPROVED);
+            return booking;
         } else {
-            booking.setStatus(Status.REJECTED);
+            throw new NotFoundException(Booking.class, "Booking not found with id: " + bookingId);
         }
-        return booking;
     }
+
 
     @Transactional(readOnly = true)
     @Override
     public BookingOutDto getBookingById(long userId, long bookingId) {
         validateBookingAccess(userId, bookingId);
-        Booking booking = bookingRepository.findById(bookingId).get();
-        return bookingMapper.returnBookingDto(booking);
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            return BookingMapper.toBookingDto(booking);
+        } else {
+            throw new NotFoundException(Booking.class, "Booking not found with id: " + bookingId);
+        }
     }
+
 
     private void validateBookingAccess(long userId, long bookingId) {
         unionService.checkBooking(bookingId);
         unionService.checkUser(userId);
-        Booking booking = bookingRepository.findById(bookingId).get();
-        if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
-            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
+        Optional<Booking> bookingOptional = bookingRepository.findById(bookingId);
+        if (bookingOptional.isPresent()) {
+            Booking booking = bookingOptional.get();
+            if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
+                throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
+            }
+        } else {
+            throw new NotFoundException(Booking.class, "Booking not found with id: " + bookingId);
         }
     }
+
 
     @Transactional(readOnly = true)
     @Override
     public List<BookingOutDto> getAllBookingsByBookerId(long userId, String state) {
         unionService.checkUser(userId);
         List<Booking> bookings = getBookingsByState(userId, state);
-        return bookingMapper.returnBookingDtoList(bookings);
+        assert bookings != null;
+        return BookingMapper.toBookingDtoList(bookings);
     }
 
     private List<Booking> getBookingsByState(long userId, String state) {
@@ -183,7 +208,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutDto> getAllBookingsForAllItemsByOwnerId(long userId, String state) {
         validateOwner(userId);
         List<Booking> bookings = getBookingsByStateForOwner(userId, state);
-        return bookingMapper.returnBookingDtoList(bookings);
+        assert bookings != null;
+        return BookingMapper.toBookingDtoList(bookings);
     }
 
     private void validateOwner(long userId) {

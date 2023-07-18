@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class BookingMapper {
 
     public static BookingOutDto toBookingDto(Booking booking) {

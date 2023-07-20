@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 
@@ -13,6 +13,10 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
+
+/**
+ * TODO Sprint add-bookings.
+ */
 
 @Slf4j
 @Validated

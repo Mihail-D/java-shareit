@@ -1,12 +1,13 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -17,15 +18,13 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,6 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final UnionService unionService;
 
     @Transactional
@@ -45,9 +45,12 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkUser(userId);
 
         User user = userRepository.findById(userId).get();
-
         Item item = ItemMapper.toItem(itemDto, user);
 
+        if (itemDto.getRequestId() != null) {
+            unionService.checkRequest(itemDto.getRequestId());
+            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+        }
         itemRepository.save(item);
 
         return ItemMapper.toItemDto(item);
@@ -101,11 +104,11 @@ public class ItemServiceImpl implements ItemService {
 
         if (item.getOwner().getId() == userId) {
 
-            Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemId, Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
+                 itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
@@ -130,16 +133,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> getItemsUser(long userId) {
+    public List<ItemDto> getItemsUser(long userId, Integer from, Integer size) {
 
         unionService.checkUser(userId);
+        PageRequest pageRequest = unionService.checkPageSize(from, size);
 
         List<ItemDto> resultList = new ArrayList<>();
 
-        for (ItemDto itemDto : ItemMapper.toItemDtoList(itemRepository.findByOwnerId(userId))) {
+        for (ItemDto itemDto : ItemMapper.toItemDtoList(itemRepository.findByOwnerId(userId, pageRequest))) {
 
-            Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
-            Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
                 itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
@@ -172,12 +176,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public  List<ItemDto> searchItem(String text, Integer from, Integer size) {
+
+        PageRequest pageRequest = unionService.checkPageSize(from, size);
 
         if (text.equals("")) {
             return Collections.emptyList();
         } else {
-            return ItemMapper.toItemDtoList(itemRepository.search(text));
+            return ItemMapper.toItemDtoList(itemRepository.search(text, pageRequest));
         }
     }
 
@@ -193,15 +199,14 @@ public class ItemServiceImpl implements ItemService {
 
         LocalDateTime dateTime = LocalDateTime.now();
 
-        Optional<Booking> booking = bookingRepository.getFirstByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, Status.APPROVED, dateTime);
+        Optional<Booking> booking = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(itemId, userId, Status.APPROVED, dateTime);
 
         if (booking.isEmpty()) {
             throw new ValidationException("User " + userId + " not booking this item " + itemId);
         }
 
         Comment comment = CommentMapper.toComment(commentDto, item, user, dateTime);
-        commentRepository.save(comment);
 
-        return CommentMapper.toCommentDto(comment);
+        return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 }

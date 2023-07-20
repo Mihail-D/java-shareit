@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +24,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = UserMapper.toUser(userDto);
         userRepository.save(user);
 
         return UserMapper.toUserDto(user);
@@ -34,12 +33,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
-        User user = UserMapper.returnUser(userDto);
-        user.setId(userId);
-        unionService.checkUser(userId);
 
-        User newUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
+        User user = UserMapper.toUser(userDto);
+        user.setId(userId);
+
+        unionService.checkUser(userId);
+        User newUser = userRepository.findById(userId).get();
 
         if (user.getName() != null) {
             newUser.setName(user.getName());
@@ -47,13 +46,15 @@ public class UserServiceImpl implements UserService {
 
         if (user.getEmail() != null) {
             List<User> findEmail = userRepository.findByEmail(user.getEmail());
+
             if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
-                throw new EmailExistException("There is already a user with an email " + user.getEmail());
+                throw new EmailExistException("there is already a user with an email " + user.getEmail());
             }
             newUser.setEmail(user.getEmail());
         }
 
         userRepository.save(newUser);
+
         return UserMapper.toUserDto(newUser);
     }
 
@@ -68,12 +69,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(long userId) {
+
         unionService.checkUser(userId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
-
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(userRepository.findById(userId).get());
     }
 
     @Transactional(readOnly = true)

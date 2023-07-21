@@ -39,27 +39,22 @@ public class BookingControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private ItemDto itemDto;
-
-    private UserDto user;
-
     private BookingDto bookingDto;
 
     private BookingOutDto firstBookingOutDto;
 
     private BookingOutDto secondBookingOutDto;
 
-
     @BeforeEach
     void beforeEach() {
 
-        user = UserDto.builder()
+        UserDto user = UserDto.builder()
                 .id(1L)
                 .name("Anna")
                 .email("anna@yandex.ru")
                 .build();
 
-        itemDto = ItemDto.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .requestId(1L)
                 .name("screwdriver")
                 .description("works well, does not ask to eat")
@@ -112,7 +107,7 @@ public class BookingControllerTest {
 
     @Test
     void approveBooking() throws Exception {
-        when(bookingService.approveBooking(anyLong(),anyLong(), anyBoolean())).thenReturn(firstBookingOutDto);
+        when(bookingService.approveBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(firstBookingOutDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
                         .param("approved", "true")
@@ -131,7 +126,7 @@ public class BookingControllerTest {
 
     @Test
     void getBookingById() throws Exception {
-        when(bookingService.getBookingById(anyLong(),anyLong())).thenReturn(firstBookingOutDto);
+        when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(firstBookingOutDto);
 
         mvc.perform(get("/bookings/{bookingId}", 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -177,5 +172,3 @@ public class BookingControllerTest {
         verify(bookingService, times(1)).getAllBookingsForAllItemsByOwnerId(1L, "ALL", 0, 10);
     }
 }
-
-

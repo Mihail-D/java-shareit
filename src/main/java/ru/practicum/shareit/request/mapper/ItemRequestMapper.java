@@ -32,6 +32,7 @@ public class ItemRequestMapper {
         return itemRequest;
     }
 
+    @SuppressWarnings("unused")
     public static List<ItemRequestDto> toItemRequestDtoList(Iterable<ItemRequest> requests) {
         List<ItemRequestDto> result = new ArrayList<>();
 

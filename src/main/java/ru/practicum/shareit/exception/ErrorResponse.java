@@ -8,6 +8,7 @@ public class ErrorResponse {
         this.error = error;
     }
 
+    @SuppressWarnings("unused")
     public String getError() {
         return error;
     }

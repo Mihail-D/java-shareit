@@ -45,20 +45,16 @@ public class ItemControllerTest {
 
     private CommentDto commentDto;
 
-    private ItemRequest itemRequest;
-
-    private User user;
-
     @BeforeEach
     void beforeEach() {
 
-        user = User.builder()
+        User user = User.builder()
                 .id(1L)
                 .name("Anna")
                 .email("anna@yandex.ru")
                 .build();
 
-        itemRequest = ItemRequest.builder()
+        ItemRequest itemRequest = ItemRequest.builder()
                 .id(1L)
                 .description("Anna")
                 .requester(user)

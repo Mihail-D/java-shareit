@@ -4,9 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 @AllArgsConstructor
@@ -26,5 +23,4 @@ public class User {
 
     @Column(name = "email", unique = true)
     private String email;
-
 }

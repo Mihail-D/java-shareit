@@ -11,6 +11,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,28 +35,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
-
         User user = UserMapper.toUser(userDto);
         user.setId(userId);
-
         unionService.checkUser(userId);
-        User newUser = userRepository.findById(userId).get();
-
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new NoSuchElementException("User with id " + userId + " not found");
+        }
+        User newUser = optionalUser.get();
         if (user.getName() != null) {
             newUser.setName(user.getName());
         }
-
         if (user.getEmail() != null) {
             List<User> findEmail = userRepository.findByEmail(user.getEmail());
-
             if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
-                throw new EmailExistException("there is already a user with an email " + user.getEmail());
+                throw new EmailExistException("There is already a user with an email " + user.getEmail());
             }
             newUser.setEmail(user.getEmail());
         }
-
         userRepository.save(newUser);
-
         return UserMapper.toUserDto(newUser);
     }
 
@@ -69,9 +68,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(long userId) {
-
         unionService.checkUser(userId);
-        return UserMapper.toUserDto(userRepository.findById(userId).get());
+        return UserMapper.toUserDto(userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found")));
     }
 
     @Transactional(readOnly = true)

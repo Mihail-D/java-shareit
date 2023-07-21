@@ -11,10 +11,6 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Slf4j
 @Validated
 @RestController
@@ -58,5 +54,5 @@ public class UserController {
 
         log.info("List all Users");
         return ResponseEntity.ok(userService.getAllUsers());
-   }
+    }
 }

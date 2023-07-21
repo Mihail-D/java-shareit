@@ -56,21 +56,9 @@ public class RequestServiceTest {
                 .email("anna@yandex.ru")
                 .build();
 
-        User secondUser = User.builder()
-                .id(2L)
-                .name("Tiana")
-                .email("tiana@yandex.ru")
-                .build();
-
         firstItemRequest = ItemRequest.builder()
                 .id(1L)
                 .description("ItemRequest 1")
-                .created(LocalDateTime.now())
-                .build();
-
-        ItemRequest secondItemRequest = ItemRequest.builder()
-                .id(2L)
-                .description("ItemRequest 2")
                 .created(LocalDateTime.now())
                 .build();
 

@@ -44,9 +44,7 @@ public class RequestServiceTest {
 
 
     private User firstUser;
-    private User secondUser;
     private ItemRequest firstItemRequest;
-    private ItemRequest secondItemRequest;
     private ItemRequestDto itemRequestDto;
     private Item item;
 
@@ -58,7 +56,7 @@ public class RequestServiceTest {
                 .email("anna@yandex.ru")
                 .build();
 
-        secondUser = User.builder()
+        User secondUser = User.builder()
                 .id(2L)
                 .name("Tiana")
                 .email("tiana@yandex.ru")
@@ -70,7 +68,7 @@ public class RequestServiceTest {
                 .created(LocalDateTime.now())
                 .build();
 
-        secondItemRequest = ItemRequest.builder()
+        ItemRequest secondItemRequest = ItemRequest.builder()
                 .id(2L)
                 .description("ItemRequest 2")
                 .created(LocalDateTime.now())

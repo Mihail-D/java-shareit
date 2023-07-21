@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -19,12 +19,15 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -108,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                 itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
+                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
@@ -176,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public  List<ItemDto> searchItem(String text, Integer from, Integer size) {
+    public List<ItemDto> searchItem(String text, Integer from, Integer size) {
 
         PageRequest pageRequest = unionService.checkPageSize(from, size);
 

@@ -6,10 +6,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -20,7 +16,7 @@ import javax.persistence.*;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 

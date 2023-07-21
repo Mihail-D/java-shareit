@@ -36,17 +36,15 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingOutDto addBooking(BookingDto bookingDto, long userId) {
-
         unionService.checkItem(bookingDto.getItemId());
-        Item item = itemRepository.findById(bookingDto.getItemId()).get();
-
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new NotFoundException(Item.class, "Item not found"));
         unionService.checkUser(userId);
-        User user = userRepository.findById(userId).get();
-
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(User.class, "User not found"));
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(user);
-
         if (item.getOwner().equals(user)) {
             throw new NotFoundException(User.class, "Owner " + userId + " can't book his item");
         }
@@ -57,25 +55,22 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Start cannot be later than end");
         }
         if (booking.getStart().isEqual(booking.getEnd())) {
-            throw new ValidationException("Start cannot be equal than end");
+            throw new ValidationException("Start cannot be equal to end");
         }
-
         bookingRepository.save(booking);
-
         return BookingMapper.toBookingDto(booking);
     }
+
 
     @Transactional
     @Override
     public BookingOutDto approveBooking(long userId, long bookingId, Boolean approved) {
-
         unionService.checkBooking(bookingId);
-        Booking booking = bookingRepository.findById(bookingId).get();
-
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException(Booking.class, "Booking not found"));
         if (booking.getItem().getOwner().getId() != userId) {
             throw new NotFoundException(User.class, "Only owner " + userId + " items can change booking status");
         }
-
         if (approved) {
             if (booking.getStatus().equals(Status.APPROVED)) {
                 throw new ValidationException("Incorrect status update request");
@@ -84,7 +79,6 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-
         bookingRepository.save(booking);
         return BookingMapper.toBookingDto(booking);
     }
@@ -92,16 +86,14 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public BookingOutDto getBookingById(long userId, long bookingId) {
-
         unionService.checkBooking(bookingId);
-        Booking booking = bookingRepository.findById(bookingId).get();
-
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException(Booking.class, "Booking not found"));
         unionService.checkUser(userId);
-
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
             return BookingMapper.toBookingDto(booking);
         } else {
-            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
+            throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation, or the owner " + userId + " of the item can");
         }
     }
 

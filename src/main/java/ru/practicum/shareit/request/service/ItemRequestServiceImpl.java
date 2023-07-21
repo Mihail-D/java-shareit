@@ -19,6 +19,7 @@ import ru.practicum.shareit.util.UnionService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -71,13 +72,16 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto getRequestById(long userId, long requestId) {
-
         unionService.checkUser(userId);
         unionService.checkRequest(requestId);
+        Optional<ItemRequest> optionalItemRequest = itemRequestRepository.findById(requestId);
 
-        ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
-
-        return addItemsToRequest(itemRequest);
+        if (optionalItemRequest.isPresent()) {
+            ItemRequest itemRequest = optionalItemRequest.get();
+            return addItemsToRequest(itemRequest);
+        } else {
+            throw new NotFoundException(ItemRequest.class, "Request not found with ID: " + requestId);
+        }
     }
 
     @Override

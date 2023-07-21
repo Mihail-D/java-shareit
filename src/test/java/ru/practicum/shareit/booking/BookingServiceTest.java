@@ -239,7 +239,7 @@ public class BookingServiceTest {
     void getAllBookingsByBookerId() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
-        when(bookingRepository.findAllByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
 
         String state = "ALL";
 
@@ -249,7 +249,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "CURRENT";
 
         bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
@@ -258,7 +258,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdAndEndBeforeOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "PAST";
 
         bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
@@ -267,7 +267,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdAndStartAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "FUTURE";
 
         bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
@@ -276,7 +276,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "WAITING";
 
         bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
@@ -285,7 +285,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "REJECTED";
 
         bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
@@ -300,7 +300,7 @@ public class BookingServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findByOwnerId(anyLong())).thenReturn(List.of(item));
         when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
-        when(bookingRepository.findAllByItemOwnerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
 
         String state = "ALL";
 
@@ -310,7 +310,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartAsc(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartAsc(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "CURRENT";
 
         bookingOutDtoTest = bookingService.getAllBookingsForAllItemsByOwnerId(firstUser.getId(), state, 5, 10);
@@ -319,7 +319,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdAndEndBeforeOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "PAST";
 
         bookingOutDtoTest = bookingService.getAllBookingsForAllItemsByOwnerId(firstUser.getId(), state, 5, 10);
@@ -328,7 +328,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdAndStartAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "FUTURE";
 
         bookingOutDtoTest = bookingService.getAllBookingsForAllItemsByOwnerId(firstUser.getId(), state, 5, 10);
@@ -337,7 +337,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "WAITING";
 
         bookingOutDtoTest = bookingService.getAllBookingsForAllItemsByOwnerId(firstUser.getId(), state, 5, 10);
@@ -346,7 +346,7 @@ public class BookingServiceTest {
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
         assertEquals(bookingOutDtoTest.get(0).getBooker(), UserMapper.toUserDto(firstUser));
 
-        when(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
+        when(bookingRepository.getByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "REJECTED";
 
         bookingOutDtoTest = bookingService.getAllBookingsForAllItemsByOwnerId(firstUser.getId(), state, 5, 10);

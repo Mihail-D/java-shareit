@@ -18,11 +18,10 @@ public enum State {
 
     public static State getEnumValue(String state) {
 
-    try {
-        return State.valueOf(state);
-    } catch (Exception e) {
-        throw new UnsupportedStatusException("Unknown state: " + state);
-    }
-
+        try {
+            return State.valueOf(state);
+        } catch (Exception e) {
+            throw new UnsupportedStatusException("Unknown state: " + state);
+        }
     }
 }

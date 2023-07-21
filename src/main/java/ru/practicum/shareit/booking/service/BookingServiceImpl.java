@@ -177,4 +177,3 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoList(bookings);
     }
 }
-

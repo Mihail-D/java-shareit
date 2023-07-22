@@ -12,7 +12,6 @@ import ru.practicum.shareit.util.UnionService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

@@ -7,6 +7,8 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @UtilityClass
 public class ItemMapper {
@@ -36,11 +38,9 @@ public class ItemMapper {
     }
 
     public static List<ItemDto> toItemDtoList(Iterable<Item> items) {
-        List<ItemDto> result = new ArrayList<>();
-
-        for (Item item : items) {
-            result.add(toItemDto(item));
-        }
-        return result;
+        return StreamSupport.stream(items.spliterator(), false)
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
+
 }

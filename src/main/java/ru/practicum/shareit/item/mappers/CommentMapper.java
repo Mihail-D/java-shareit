@@ -9,6 +9,8 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @UtilityClass
 public class CommentMapper {
@@ -32,11 +34,8 @@ public class CommentMapper {
     }
 
     public static List<CommentDto> toCommentDtoList(Iterable<Comment> comments) {
-        List<CommentDto> result = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            result.add(toCommentDto(comment));
-        }
-        return result;
+        return StreamSupport.stream(comments.spliterator(), false)
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
     }
 }

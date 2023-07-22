@@ -37,12 +37,9 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, long userId) {
         User user = UserMapper.toUser(userDto);
         user.setId(userId);
+        User newUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
         unionService.checkUser(userId);
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new NoSuchElementException("User with id " + userId + " not found");
-        }
-        User newUser = optionalUser.get();
         if (user.getName() != null) {
             newUser.setName(user.getName());
         }

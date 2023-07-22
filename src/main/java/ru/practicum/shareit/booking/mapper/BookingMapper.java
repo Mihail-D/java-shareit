@@ -11,6 +11,8 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @UtilityClass
 public class BookingMapper {
@@ -51,11 +53,8 @@ public class BookingMapper {
     }
 
     public static List<BookingOutDto> toBookingDtoList(Iterable<Booking> bookings) {
-        List<BookingOutDto> result = new ArrayList<>();
-
-        for (Booking booking : bookings) {
-            result.add(toBookingDto(booking));
-        }
-        return result;
+        return StreamSupport.stream(bookings.spliterator(), false)
+                .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toList());
     }
 }

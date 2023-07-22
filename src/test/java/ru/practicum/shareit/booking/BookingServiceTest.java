@@ -68,14 +68,14 @@ public class BookingServiceTest {
     void beforeEach() {
         firstUser = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         secondUser = User.builder()
                 .id(2L)
-                .name("Tiana")
-                .email("tiana@yandex.ru")
+                .name("Sam")
+                .email("sam@gmail.com")
                 .build();
 
         item = Item.builder()

@@ -19,14 +19,14 @@ class UserDtoTest {
     void testUserDto() throws Exception {
         UserDto userDto = UserDto.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         JsonContent<UserDto> result = json.write(userDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("Anna");
-        assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("anna@yandex.ru");
+        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("Barby");
+        assertThat(result).extractingJsonPathStringValue("$.email").isEqualTo("barby@gmail.com");
     }
 }

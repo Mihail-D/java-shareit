@@ -23,8 +23,8 @@ class CommentDtoTest {
 
         UserDto userDto = UserDto.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         CommentDto commentDto = CommentDto.builder()
@@ -38,6 +38,6 @@ class CommentDtoTest {
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.text").isEqualTo("acceptable");
-        assertThat(result).extractingJsonPathStringValue("$.authorName").isEqualTo("Anna");
+        assertThat(result).extractingJsonPathStringValue("$.authorName").isEqualTo("Barby");
     }
 }

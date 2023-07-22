@@ -42,18 +42,17 @@ public class RequestServiceTest {
     @MockBean
     private UnionService unionService;
 
-
     private User firstUser;
     private ItemRequest firstItemRequest;
     private ItemRequestDto itemRequestDto;
     private Item item;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         firstUser = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         firstItemRequest = ItemRequest.builder()
@@ -80,10 +79,10 @@ public class RequestServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(firstUser));
         when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(firstItemRequest);
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.addRequest(itemRequestDto, firstUser.getId());
+        ItemRequestDto actualItemRequestDto = itemRequestService.addRequest(itemRequestDto, firstUser.getId());
 
-        assertEquals(itemRequestDtoTest.getId(), firstItemRequest.getId());
-        assertEquals(itemRequestDtoTest.getDescription(), firstItemRequest.getDescription());
+        assertEquals(actualItemRequestDto.getId(), firstItemRequest.getId());
+        assertEquals(actualItemRequestDto.getDescription(), firstItemRequest.getDescription());
 
         verify(itemRequestRepository, times(1)).save(any(ItemRequest.class));
     }
@@ -94,15 +93,16 @@ public class RequestServiceTest {
         when(itemRequestRepository.findByRequesterIdOrderByCreatedAsc(anyLong())).thenReturn(List.of(firstItemRequest));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.getRequests(firstUser.getId()).get(0);
+        ItemRequestDto actualItemRequestDto = itemRequestService.getRequests(firstUser.getId()).get(0);
 
-        assertEquals(itemRequestDtoTest.getItems().get(0).getId(), item.getId());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getName(), item.getName());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getDescription(), item.getDescription());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getAvailable(), item.getAvailable());
+        assertEquals(actualItemRequestDto.getItems().get(0).getId(), item.getId());
+        assertEquals(actualItemRequestDto.getItems().get(0).getName(), item.getName());
+        assertEquals(actualItemRequestDto.getItems().get(0).getDescription(), item.getDescription());
+        assertEquals(actualItemRequestDto.getItems().get(0).getAvailable(), item.getAvailable());
 
         verify(itemRequestRepository, times(1)).findByRequesterIdOrderByCreatedAsc(anyLong());
     }
+
 
     @Test
     void getAllRequests() {
@@ -110,15 +110,16 @@ public class RequestServiceTest {
         when(itemRequestRepository.findByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstItemRequest)));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.getAllRequests(firstUser.getId(), 5, 10).get(0);
+        ItemRequestDto actualItemRequestDto = itemRequestService.getAllRequests(firstUser.getId(), 5, 10).get(0);
 
-        assertEquals(itemRequestDtoTest.getItems().get(0).getId(), item.getId());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getName(), item.getName());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getDescription(), item.getDescription());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getAvailable(), item.getAvailable());
+        assertEquals(actualItemRequestDto.getItems().get(0).getId(), item.getId());
+        assertEquals(actualItemRequestDto.getItems().get(0).getName(), item.getName());
+        assertEquals(actualItemRequestDto.getItems().get(0).getDescription(), item.getDescription());
+        assertEquals(actualItemRequestDto.getItems().get(0).getAvailable(), item.getAvailable());
 
         verify(itemRequestRepository, times(1)).findByIdIsNotOrderByCreatedAsc(anyLong(),any(PageRequest.class));
     }
+
 
     @Test
     void getRequestById() {
@@ -127,25 +128,25 @@ public class RequestServiceTest {
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.ofNullable(firstItemRequest));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 
+        ItemRequestDto actualItemRequestDto = itemRequestService.getRequestById(firstUser.getId(), firstItemRequest.getId());
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.getRequestById(firstUser.getId(), firstItemRequest.getId());
-
-        assertEquals(itemRequestDtoTest.getId(), firstItemRequest.getId());
-        assertEquals(itemRequestDtoTest.getDescription(), firstItemRequest.getDescription());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getId(), item.getId());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getRequestId(), firstUser.getId());
+        assertEquals(actualItemRequestDto.getId(), firstItemRequest.getId());
+        assertEquals(actualItemRequestDto.getDescription(), firstItemRequest.getDescription());
+        assertEquals(actualItemRequestDto.getItems().get(0).getId(), item.getId());
+        assertEquals(actualItemRequestDto.getItems().get(0).getRequestId(), firstUser.getId());
 
         verify(itemRequestRepository, times(1)).findById(anyLong());
     }
+
 
     @Test
     void addItemsToRequest() {
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 
-        ItemRequestDto itemRequestDtoTest = itemRequestService.addItemsToRequest(firstItemRequest);
+        ItemRequestDto actualItemRequestDto = itemRequestService.addItemsToRequest(firstItemRequest);
 
-        assertEquals(itemRequestDtoTest.getItems().get(0).getId(), item.getId());
-        assertEquals(itemRequestDtoTest.getItems().get(0).getRequestId(), firstUser.getId());
+        assertEquals(actualItemRequestDto.getItems().get(0).getId(), item.getId());
+        assertEquals(actualItemRequestDto.getItems().get(0).getRequestId(), firstUser.getId());
 
         verify(itemRepository, times(1)).findByRequestId(anyLong());
     }

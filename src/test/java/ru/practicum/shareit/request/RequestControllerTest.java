@@ -37,21 +37,18 @@ public class RequestControllerTest {
     private MockMvc mvc;
 
     private ItemRequestDto firstItemRequestDto;
-
     private ItemRequestDto secondItemRequestDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
+        firstItemRequestDto = createItemRequestDto(1L, "ItemRequest 1");
+        secondItemRequestDto = createItemRequestDto(2L, "ItemRequest 2");
+    }
 
-        firstItemRequestDto = ItemRequestDto.builder()
-                .id(1L)
-                .description("ItemRequest 1")
-                .created(LocalDateTime.now())
-                .build();
-
-        secondItemRequestDto = ItemRequestDto.builder()
-                .id(2L)
-                .description("ItemRequest 2")
+    private ItemRequestDto createItemRequestDto(Long id, String description) {
+        return ItemRequestDto.builder()
+                .id(id)
+                .description(description)
                 .created(LocalDateTime.now())
                 .build();
     }
@@ -85,8 +82,9 @@ public class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(List.of(firstItemRequestDto, secondItemRequestDto))));
 
-        verify(itemRequestService, times(1)).getRequests(1L);
+        verify(itemRequestService).getRequests(1L);
     }
+
 
     @Test
     void getAllRequests() throws Exception {
@@ -102,8 +100,9 @@ public class RequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(List.of(firstItemRequestDto, secondItemRequestDto))));
 
-        verify(itemRequestService, times(1)).getAllRequests(1L, 0, 10);
+        verify(itemRequestService).getAllRequests(1L, 0, 10);
     }
+
 
     @Test
     void getRequestById() throws Exception {
@@ -119,6 +118,7 @@ public class RequestControllerTest {
                 .andExpect(jsonPath("$.id", is(firstItemRequestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(firstItemRequestDto.getDescription()), String.class));
 
-        verify(itemRequestService, times(1)).getRequestById(1L, 1L);
+        verify(itemRequestService).getRequestById(1L, 1L);
     }
+
 }

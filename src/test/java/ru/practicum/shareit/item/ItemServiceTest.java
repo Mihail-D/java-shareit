@@ -73,8 +73,8 @@ public class ItemServiceTest {
     void beforeEach() {
         user = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         itemRequest = ItemRequest.builder()

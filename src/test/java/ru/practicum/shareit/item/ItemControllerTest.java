@@ -50,13 +50,13 @@ public class ItemControllerTest {
 
         User user = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         ItemRequest itemRequest = ItemRequest.builder()
                 .id(1L)
-                .description("Anna")
+                .description("Barby")
                 .requester(user)
                 .created(LocalDateTime.now())
                 .build();

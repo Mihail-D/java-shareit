@@ -35,8 +35,8 @@ class ItemRepositoryTest {
 
         user = userRepository.save(User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build());
 
         firstitem = itemRepository.save(Item.builder()

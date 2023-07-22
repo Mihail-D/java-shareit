@@ -29,29 +29,24 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     private User firstUser;
-
     private User secondUser;
-
     private UserDto firstUserDto;
-
     private UserDto secondUserDto;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         firstUser = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
-
         firstUserDto = UserMapper.toUserDto(firstUser);
 
         secondUser = User.builder()
                 .id(2L)
-                .name("Tiana")
-                .email("tiana@yandex.ru")
+                .name("Sam")
+                .email("sam@gmail.com")
                 .build();
-
         secondUserDto = UserMapper.toUserDto(secondUser);
     }
 
@@ -65,7 +60,7 @@ class UserServiceTest {
         assertEquals(userDtoTest.getName(), firstUserDto.getName());
         assertEquals(userDtoTest.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).save(firstUser);
+        verify(userRepository).save(firstUser);
     }
 
     @Test
@@ -75,16 +70,16 @@ class UserServiceTest {
         when(userRepository.findByEmail(anyString())).thenReturn(List.of(firstUser));
         when(userRepository.save(any(User.class))).thenReturn(firstUser);
 
-        firstUserDto.setName("Sofia");
-        firstUserDto.setEmail("Sofia@yandex.ru");
+        firstUserDto.setName("Ken");
+        firstUserDto.setEmail("ken@yandex.ru");
 
         UserDto userDtoUpdated = userService.updateUser(firstUserDto, 1L);
 
         assertEquals(userDtoUpdated.getName(), firstUserDto.getName());
         assertEquals(userDtoUpdated.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).findByEmail(firstUser.getEmail());
-        verify(userRepository, times(1)).save(firstUser);
+        verify(userRepository).findByEmail(firstUser.getEmail());
+        verify(userRepository).save(firstUser);
     }
 
     @Test
@@ -103,7 +98,7 @@ class UserServiceTest {
 
         userService.deleteUser(1L);
 
-        verify(userRepository, times(1)).deleteById(1L);
+        verify(userRepository).deleteById(1L);
     }
 
     @Test
@@ -117,7 +112,7 @@ class UserServiceTest {
         assertEquals(userDtoTest.getName(), firstUserDto.getName());
         assertEquals(userDtoTest.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository).findById(1L);
     }
 
     @Test
@@ -128,6 +123,6 @@ class UserServiceTest {
 
         assertEquals(userDtoList, List.of(firstUserDto, secondUserDto));
 
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository).findAll();
     }
 }

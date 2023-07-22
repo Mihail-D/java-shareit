@@ -34,22 +34,20 @@ public class UserControllerTest {
     private MockMvc mvc;
 
     private UserDto firstUserDto;
-
-    private  UserDto secondUserDto;
+    private UserDto secondUserDto;
 
     @BeforeEach
-    void beforeEach() {
-
+    void setUp() {
         firstUserDto = UserDto.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barby")
+                .email("barby@gmail.com")
                 .build();
 
         secondUserDto = UserDto.builder()
                 .id(2L)
-                .name("Sofia")
-                .email("sofia@yandex.ru")
+                .name("Ken")
+                .email("ken@gmail.com")
                 .build();
     }
 
@@ -67,7 +65,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
-        verify(userService, times(1)).addUser(firstUserDto);
+        verify(userService).addUser(firstUserDto);
     }
 
     @Test
@@ -84,7 +82,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
-        verify(userService, times(1)).updateUser(firstUserDto, 1L);
+        verify(userService).updateUser(firstUserDto, 1L);
     }
 
     @Test
@@ -92,7 +90,7 @@ public class UserControllerTest {
         mvc.perform(delete("/users/{userId}", 1L))
                 .andExpect(status().isNoContent());
 
-        verify(userService, times(1)).deleteUser(1L);
+        verify(userService).deleteUser(1L);
     }
 
     @Test
@@ -105,18 +103,17 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(firstUserDto.getName()), String.class))
                 .andExpect(jsonPath("$.email", is(firstUserDto.getEmail()), String.class));
 
-        verify(userService, times(1)).getUserById(1L);
+        verify(userService).getUserById(1L);
     }
 
     @Test
     void getAllUsers() throws Exception {
-
         when(userService.getAllUsers()).thenReturn(List.of(firstUserDto, secondUserDto));
 
         mvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(List.of(firstUserDto, secondUserDto))));
 
-        verify(userService, times(1)).getAllUsers();
+        verify(userService).getAllUsers();
     }
 }

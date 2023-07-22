@@ -44,31 +44,26 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getRequests(long userId) {
-
         unionService.checkUser(userId);
-
         List<ItemRequest> itemRequests = itemRequestRepository.findByRequesterIdOrderByCreatedAsc(userId);
-
-        List<ItemRequestDto> result = new ArrayList<>();
-        for (ItemRequest itemRequest : itemRequests) {
-            result.add(addItemsToRequest(itemRequest));
-        }
-        return result;
+        return convertItemRequestsToDto(itemRequests);
     }
 
     @Override
     public List<ItemRequestDto> getAllRequests(Long userId, Integer from, Integer size) {
-
         PageRequest pageRequest = unionService.checkPageSize(from, size);
-
         Page<ItemRequest> itemRequests = itemRequestRepository.findByIdIsNotOrderByCreatedAsc(userId, pageRequest);
+        return convertItemRequestsToDto(itemRequests.getContent());
+    }
 
+    private List<ItemRequestDto> convertItemRequestsToDto(List<ItemRequest> itemRequests) {
         List<ItemRequestDto> result = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequests) {
             result.add(addItemsToRequest(itemRequest));
         }
         return result;
     }
+
 
     @Override
     public ItemRequestDto getRequestById(long userId, long requestId) {

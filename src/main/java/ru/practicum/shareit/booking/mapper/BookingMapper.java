@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;

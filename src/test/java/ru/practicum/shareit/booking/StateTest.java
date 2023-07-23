@@ -18,27 +18,27 @@ public class StateTest {
         assertThrows(UnsupportedStatusException.class, () -> State.getEnumValue(finalStateStr));
 
         stateStr = "ALL";
-        State stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.ALL);
+        State actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.ALL);
 
         stateStr = "CURRENT";
-        stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.CURRENT);
+        actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.CURRENT);
 
         stateStr = "PAST";
-        stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.PAST);
+        actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.PAST);
 
         stateStr = "FUTURE";
-        stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.FUTURE);
+        actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.FUTURE);
 
         stateStr = "REJECTED";
-        stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.REJECTED);
+        actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.REJECTED);
 
         stateStr = "WAITING";
-        stateTest = State.getEnumValue(stateStr);
-        assertEquals(stateTest, State.WAITING);
+        actualState = State.getEnumValue(stateStr);
+        assertEquals(actualState, State.WAITING);
     }
 }

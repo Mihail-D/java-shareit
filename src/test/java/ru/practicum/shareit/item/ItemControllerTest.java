@@ -70,8 +70,8 @@ public class ItemControllerTest {
 
         firstitemDto = ItemDto.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .comments(List.of(commentDto))
                 .requestId(itemRequest.getId())

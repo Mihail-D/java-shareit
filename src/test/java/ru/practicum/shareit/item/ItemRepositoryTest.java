@@ -40,8 +40,8 @@ class ItemRepositoryTest {
                 .build());
 
         firstitem = itemRepository.save(Item.builder()
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .owner(user)
                 .build());

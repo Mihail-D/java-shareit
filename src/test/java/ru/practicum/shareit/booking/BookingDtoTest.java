@@ -35,8 +35,8 @@ class BookingDtoTest {
 
         ItemDto itemDto = ItemDto.builder()
                 .id(2L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .build();
 
@@ -59,7 +59,7 @@ class BookingDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.booker.name").isEqualTo("Barby");
         assertThat(result).extractingJsonPathStringValue("$.booker.email").isEqualTo("barby@gmail.com");
         assertThat(result).extractingJsonPathNumberValue("$.item.id").isEqualTo(2);
-        assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("screwdriver");
+        assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("slippers");
         assertThat(result).extractingJsonPathBooleanValue("$.item.available").isEqualTo(true);
     }
 }

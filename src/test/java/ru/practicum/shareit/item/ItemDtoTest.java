@@ -27,8 +27,8 @@ class ItemDtoTest {
 
         ItemDto itemDto = ItemDto.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .requestId(userDto.getId())
                 .build();
@@ -36,8 +36,8 @@ class ItemDtoTest {
         JsonContent<ItemDto> result = json.write(itemDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
-        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("screwdriver");
-        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("works well, does not ask to eat");
+        assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("slippers");
+        assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("Step into comfort with our cozy slippers!");
         assertThat(result).extractingJsonPathBooleanValue("$.available").isEqualTo(true);
         assertThat(result).extractingJsonPathNumberValue("$.requestId").isEqualTo(1);
     }

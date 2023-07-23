@@ -56,8 +56,8 @@ public class BookingControllerTest {
 
         ItemDto itemDto = ItemDto.builder()
                 .requestId(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .build();
 

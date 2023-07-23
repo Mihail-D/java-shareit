@@ -237,7 +237,7 @@ public class BookingServiceTest {
     @Test
     void getAllBookingsByBookerId() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
+        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10, 10));
         when(bookingRepository.getByBookerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
 
         String state = "ALL";
@@ -298,7 +298,7 @@ public class BookingServiceTest {
     void getAllBookingsForAllItemsByOwnerId() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findByOwnerId(anyLong())).thenReturn(List.of(item));
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
+        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10, 10));
         when(bookingRepository.getByItemOwnerIdOrderByStartDesc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
 
         String state = "ALL";

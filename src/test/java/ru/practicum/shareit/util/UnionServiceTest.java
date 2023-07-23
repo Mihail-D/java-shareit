@@ -59,9 +59,9 @@ public class UnionServiceTest {
 
     @Test
     void checkPageSize() {
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(0,0));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5,-5));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5,0));
-        assertThrows(ValidationException.class, () -> unionService.checkPageSize(-5,5));
+        assertThrows(ValidationException.class, () -> unionService.checkPageSize(0, 0));
+        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5, -5));
+        assertThrows(ValidationException.class, () -> unionService.checkPageSize(5, 0));
+        assertThrows(ValidationException.class, () -> unionService.checkPageSize(-5, 5));
     }
 }

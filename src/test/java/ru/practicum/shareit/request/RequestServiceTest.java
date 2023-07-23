@@ -103,10 +103,9 @@ public class RequestServiceTest {
         verify(itemRequestRepository, times(1)).findByRequesterIdOrderByCreatedAsc(anyLong());
     }
 
-
     @Test
     void getAllRequests() {
-        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10,10));
+        when(unionService.checkPageSize(anyInt(), anyInt())).thenReturn(PageRequest.of(5 / 10, 10));
         when(itemRequestRepository.findByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstItemRequest)));
         when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
 
@@ -117,9 +116,8 @@ public class RequestServiceTest {
         assertEquals(actualItemRequestDto.getItems().get(0).getDescription(), item.getDescription());
         assertEquals(actualItemRequestDto.getItems().get(0).getAvailable(), item.getAvailable());
 
-        verify(itemRequestRepository, times(1)).findByIdIsNotOrderByCreatedAsc(anyLong(),any(PageRequest.class));
+        verify(itemRequestRepository, times(1)).findByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class));
     }
-
 
     @Test
     void getRequestById() {
@@ -137,7 +135,6 @@ public class RequestServiceTest {
 
         verify(itemRequestRepository, times(1)).findById(anyLong());
     }
-
 
     @Test
     void addItemsToRequest() {

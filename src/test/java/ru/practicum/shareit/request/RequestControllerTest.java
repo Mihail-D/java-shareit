@@ -85,7 +85,6 @@ public class RequestControllerTest {
         verify(itemRequestService).getRequests(1L);
     }
 
-
     @Test
     void getAllRequests() throws Exception {
         when(itemRequestService.getAllRequests(anyLong(), anyInt(), anyInt())).thenReturn(List.of(firstItemRequestDto, secondItemRequestDto));
@@ -103,7 +102,6 @@ public class RequestControllerTest {
         verify(itemRequestService).getAllRequests(1L, 0, 10);
     }
 
-
     @Test
     void getRequestById() throws Exception {
         when(itemRequestService.getRequestById(anyLong(), anyLong())).thenReturn(firstItemRequestDto);
@@ -120,5 +118,4 @@ public class RequestControllerTest {
 
         verify(itemRequestService).getRequestById(1L, 1L);
     }
-
 }

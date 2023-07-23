@@ -148,7 +148,6 @@ public class ItemControllerTest {
 
     @Test
     void getAllItemsUser() throws Exception {
-
         when(itemService.getItemsUser(anyLong(), anyInt(), anyInt())).thenReturn(List.of(firstitemDto, secondItemDto));
 
         mvc.perform(get("/items")

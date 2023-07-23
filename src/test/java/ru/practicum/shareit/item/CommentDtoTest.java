@@ -20,7 +20,6 @@ class CommentDtoTest {
 
     @Test
     void testCommentDto() throws Exception {
-
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("Barby")

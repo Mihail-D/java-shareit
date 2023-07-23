@@ -47,8 +47,8 @@ class ItemRepositoryTest {
                 .build());
 
         secondItem = itemRepository.save(Item.builder()
-                .name("guitar")
-                .description("a very good tool")
+                .name("flyswatter")
+                .description("Flyswatter - an effective tool for swatting flies and other pesky insects.")
                 .available(true)
                 .owner(user)
                 .build());
@@ -57,10 +57,10 @@ class ItemRepositoryTest {
     @Test
     void search() {
 
-        List<Item> items = itemRepository.search("very", PageRequest.of(0, 1));
+        List<Item> items = itemRepository.search("effective", PageRequest.of(0, 1));
 
         assertEquals(1, items.size());
-        assertEquals("guitar", items.get(0).getName());
+        assertEquals("flyswatter", items.get(0).getName());
     }
 
     @AfterEach

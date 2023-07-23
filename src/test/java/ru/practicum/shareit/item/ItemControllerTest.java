@@ -79,8 +79,8 @@ public class ItemControllerTest {
 
         secondItemDto = ItemDto.builder()
                 .id(1L)
-                .name("guitar")
-                .description("a very good tool")
+                .name("flyswatter")
+                .description("Flyswatter - an effective tool for swatting flies and other pesky insects.")
                 .available(true)
                 .comments(Collections.emptyList())
                 .requestId(itemRequest.getId())

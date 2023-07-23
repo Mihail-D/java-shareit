@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -14,13 +15,9 @@ import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Slf4j
 @Validated
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {

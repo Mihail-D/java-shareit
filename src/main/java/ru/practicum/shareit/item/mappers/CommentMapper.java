@@ -1,18 +1,17 @@
 package ru.practicum.shareit.item.mappers;
 
 import lombok.experimental.UtilityClass;
-import org.mapstruct.Mapper;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @UtilityClass
-@Mapper(componentModel = "spring")
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
@@ -34,11 +33,8 @@ public class CommentMapper {
     }
 
     public static List<CommentDto> toCommentDtoList(Iterable<Comment> comments) {
-        List<CommentDto> result = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            result.add(toCommentDto(comment));
-        }
-        return result;
+        return StreamSupport.stream(comments.spliterator(), false)
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
     }
 }

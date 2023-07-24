@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = UserMapper.toUser(userDto);
         userRepository.save(user);
 
         return UserMapper.toUserDto(user);
@@ -34,17 +34,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
-        User user = UserMapper.returnUser(userDto);
+        User user = UserMapper.toUser(userDto);
         user.setId(userId);
-        unionService.checkUser(userId);
-
         User newUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
-
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found"));
+        unionService.checkUser(userId);
         if (user.getName() != null) {
             newUser.setName(user.getName());
         }
-
         if (user.getEmail() != null) {
             List<User> findEmail = userRepository.findByEmail(user.getEmail());
             if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
@@ -52,7 +49,6 @@ public class UserServiceImpl implements UserService {
             }
             newUser.setEmail(user.getEmail());
         }
-
         userRepository.save(newUser);
         return UserMapper.toUserDto(newUser);
     }
@@ -69,11 +65,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long userId) {
         unionService.checkUser(userId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
-
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + userId + " not found")));
     }
 
     @Transactional(readOnly = true)

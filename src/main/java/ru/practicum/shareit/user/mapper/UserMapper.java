@@ -1,15 +1,14 @@
 package ru.practicum.shareit.user.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.mapstruct.Mapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @UtilityClass
-@Mapper(componentModel = "spring")
 public class UserMapper {
 
     public static UserDto toUserDto(User user) {
@@ -20,7 +19,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static User returnUser(UserDto userDto) {
+    public static User toUser(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())
@@ -29,11 +28,8 @@ public class UserMapper {
     }
 
     public static List<UserDto> toUserDtoList(Iterable<User> users) {
-        List<UserDto> result = new ArrayList<>();
-
-        for (User user : users) {
-            result.add(toUserDto(user));
-        }
-        return result;
+        return StreamSupport.stream(users.spliterator(), false)
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 }

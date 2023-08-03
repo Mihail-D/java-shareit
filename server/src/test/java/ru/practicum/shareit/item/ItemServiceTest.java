@@ -85,7 +85,7 @@ public class ItemServiceTest {
                 .request(itemRequest)
                 .build();
 
-        itemDto = ItemMapper.returnItemDto(item);
+        itemDto = ItemMapper.toItemDto(item);
 
         comment = Comment.builder()
                         .id(1L)
@@ -94,7 +94,7 @@ public class ItemServiceTest {
                         .text("Thx, Cool item")
                         .build();
 
-        commentDto = CommentMapper.returnCommentDto(comment);
+        commentDto = CommentMapper.toCommentDto(comment);
 
         firstBooking = Booking.builder()
                 .id(1L)

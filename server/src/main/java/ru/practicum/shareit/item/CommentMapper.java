@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.user.User;
 
@@ -7,9 +8,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class CommentMapper {
 
-    public static CommentDto returnCommentDto(Comment comment) {
+    public static CommentDto toCommentDto(Comment comment) {
         CommentDto commentDto = CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -19,7 +21,7 @@ public class CommentMapper {
         return commentDto;
     }
 
-    public static Comment returnComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
+    public static Comment toComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
        Comment comment = Comment.builder()
                 .text(commentDto.getText())
                 .created(dateTime)
@@ -29,11 +31,11 @@ public class CommentMapper {
         return comment;
     }
 
-    public static List<CommentDto> returnICommentDtoList(Iterable<Comment> comments) {
+    public static List<CommentDto> toCommentDtoList(Iterable<Comment> comments) {
         List<CommentDto> result = new ArrayList<>();
 
         for (Comment comment : comments) {
-            result.add(returnCommentDto(comment));
+            result.add(toCommentDto(comment));
         }
         return result;
     }

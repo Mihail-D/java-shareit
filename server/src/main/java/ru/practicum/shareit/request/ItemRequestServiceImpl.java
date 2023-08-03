@@ -35,11 +35,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         User user = userRepository.findById(userId).get();
 
-        ItemRequest itemRequest = ItemRequestMapper.returnItemRequest(itemRequestDto, user);
+        ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDto, user);
 
         itemRequest = itemRequestRepository.save(itemRequest);
 
-        return ItemRequestMapper.returnItemRequestDto(itemRequest);
+        return ItemRequestMapper.toItemRequestDto(itemRequest);
     }
 
     @Override
@@ -84,9 +84,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto addItemsToRequest(ItemRequest itemRequest) {
 
-            ItemRequestDto itemRequestDto = ItemRequestMapper.returnItemRequestDto(itemRequest);
+            ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
             List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
-            itemRequestDto.setItems(ItemMapper.returnItemDtoList(items));
+            itemRequestDto.setItems(ItemMapper.toItemDtoList(items));
 
         return itemRequestDto;
     }

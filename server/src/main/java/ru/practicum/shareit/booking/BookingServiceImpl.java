@@ -38,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
         unionService.checkUser(userId);
         User user = userRepository.findById(userId).get();
 
-        Booking booking = BookingMapper.returnBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(user);
 
@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(booking);
 
-        return BookingMapper.returnBookingDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Transactional
@@ -81,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.save(booking);
-        return BookingMapper.returnBookingDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Transactional(readOnly = true)
@@ -94,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
         unionService.checkUser(userId);
 
         if (booking.getBooker().getId() == userId || booking.getItem().getOwner().getId() == userId) {
-            return BookingMapper.returnBookingDto(booking);
+            return BookingMapper.toBookingDto(booking);
         } else {
             throw new NotFoundException(User.class, "To get information about the reservation, the car of the reservation or the owner {} " + userId + "of the item can");
         }
@@ -132,7 +132,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
 
         }
-        return BookingMapper.returnBookingDtoList(bookings);
+        return BookingMapper.toBookingDtoList(bookings);
     }
 
     @Transactional(readOnly = true)
@@ -169,7 +169,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageRequest);
                 break;
         }
-        return BookingMapper.returnBookingDtoList(bookings);
+        return BookingMapper.toBookingDtoList(bookings);
     }
 }
 

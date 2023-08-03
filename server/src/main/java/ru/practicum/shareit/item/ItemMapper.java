@@ -1,14 +1,16 @@
 package ru.practicum.shareit.item;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class ItemMapper {
 
-    public static ItemDto returnItemDto(Item item) {
+    public static ItemDto toItemDto(Item item) {
         ItemDto itemDto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -22,7 +24,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public static Item returnItem(ItemDto itemDto, User user) {
+    public static Item toItem(ItemDto itemDto, User user) {
         Item item = Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -33,11 +35,11 @@ public class ItemMapper {
         return item;
     }
 
-    public static List<ItemDto> returnItemDtoList(Iterable<Item> items) {
+    public static List<ItemDto> toItemDtoList(Iterable<Item> items) {
         List<ItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
-            result.add(returnItemDto(item));
+            result.add(toItemDto(item));
         }
         return result;
     }

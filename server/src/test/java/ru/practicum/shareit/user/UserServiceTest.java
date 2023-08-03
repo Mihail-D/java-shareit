@@ -39,7 +39,7 @@ class UserServiceTest {
                 .email("anna@yandex.ru")
                 .build();
 
-        firstUserDto = UserMapper.returnUserDto(firstUser);
+        firstUserDto = UserMapper.toUserDto(firstUser);
 
         secondUser = User.builder()
                 .id(2L)
@@ -47,7 +47,7 @@ class UserServiceTest {
                 .email("tiana@yandex.ru")
                 .build();
 
-        secondUserDto = UserMapper.returnUserDto(secondUser);
+        secondUserDto = UserMapper.toUserDto(secondUser);
     }
 
     @Test

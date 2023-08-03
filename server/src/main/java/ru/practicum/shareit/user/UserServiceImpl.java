@@ -21,17 +21,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto userDto) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = UserMapper.toUser(userDto);
         userRepository.save(user);
 
-        return UserMapper.returnUserDto(user);
+        return UserMapper.toUserDto(user);
     }
 
     @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
 
-        User user = UserMapper.returnUser(userDto);
+        User user = UserMapper.toUser(userDto);
         user.setId(userId);
 
         unionService.checkUser(userId);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(newUser);
 
-        return UserMapper.returnUserDto(newUser);
+        return UserMapper.toUserDto(newUser);
     }
 
     @Transactional
@@ -68,13 +68,13 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(long userId) {
 
         unionService.checkUser(userId);
-        return UserMapper.returnUserDto(userRepository.findById(userId).get());
+        return UserMapper.toUserDto(userRepository.findById(userId).get());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<UserDto> getAllUsers() {
 
-        return UserMapper.returnUserDtoList(userRepository.findAll());
+        return UserMapper.toUserDtoList(userRepository.findAll());
     }
 }

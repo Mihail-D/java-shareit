@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkUser(userId);
 
         User user = userRepository.findById(userId).get();
-        Item item = ItemMapper.returnItem(itemDto, user);
+        Item item = ItemMapper.toItem(itemDto, user);
 
         if (itemDto.getRequestId() != null) {
             unionService.checkRequest(itemDto.getRequestId());
@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
         }
         itemRepository.save(item);
 
-        return ItemMapper.returnItemDto(item);
+        return ItemMapper.toItemDto(item);
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).get();
 
         unionService.checkItem(itemId);
-        Item item = ItemMapper.returnItem(itemDto, user);
+        Item item = ItemMapper.toItem(itemDto, user);
 
         item.setId(itemId);
 
@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
         itemRepository.save(newItem);
 
-        return ItemMapper.returnItemDto(newItem);
+        return ItemMapper.toItemDto(newItem);
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
         unionService.checkItem(itemId);
         Item item = itemRepository.findById(itemId).get();
 
-        ItemDto itemDto = ItemMapper.returnItemDto(item);
+        ItemDto itemDto = ItemMapper.toItemDto(item);
 
         unionService.checkUser(userId);
 
@@ -102,13 +102,13 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                 itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+                 itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
 
             if (nextBooking.isPresent()) {
-                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+                itemDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking.get()));
             } else {
                 itemDto.setNextBooking(null);
             }
@@ -117,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
         List<Comment> commentList = commentRepository.findAllByItemId(itemId);
 
         if (!commentList.isEmpty()) {
-            itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+            itemDto.setComments(CommentMapper.toCommentDtoList(commentList));
         } else {
             itemDto.setComments(Collections.emptyList());
         }
@@ -134,19 +134,19 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemDto> resultList = new ArrayList<>();
 
-        for (ItemDto itemDto : ItemMapper.returnItemDtoList(itemRepository.findByOwnerIdOrderById(userId, pageRequest))) {
+        for (ItemDto itemDto : ItemMapper.toItemDtoList(itemRepository.findByOwnerIdOrderById(userId, pageRequest))) {
 
             Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
             Optional<Booking> nextBooking = bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                itemDto.setLastBooking(BookingMapper.returnBookingShortDto(lastBooking.get()));
+                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
 
             if (nextBooking.isPresent()) {
-                itemDto.setNextBooking(BookingMapper.returnBookingShortDto(nextBooking.get()));
+                itemDto.setNextBooking(BookingMapper.toBookingShortDto(nextBooking.get()));
             } else {
                 itemDto.setNextBooking(null);
             }
@@ -159,7 +159,7 @@ public class ItemServiceImpl implements ItemService {
             List<Comment> commentList = commentRepository.findAllByItemId(itemDto.getId());
 
             if (!commentList.isEmpty()) {
-                itemDto.setComments(CommentMapper.returnICommentDtoList(commentList));
+                itemDto.setComments(CommentMapper.toCommentDtoList(commentList));
             } else {
                 itemDto.setComments(Collections.emptyList());
             }
@@ -177,7 +177,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.equals("")) {
             return Collections.emptyList();
         } else {
-            return ItemMapper.returnItemDtoList(itemRepository.search(text, pageRequest));
+            return ItemMapper.toItemDtoList(itemRepository.search(text, pageRequest));
         }
     }
 
@@ -199,8 +199,8 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("User " + userId + " not booking this item " + itemId);
         }
 
-        Comment comment = CommentMapper.returnComment(commentDto, item, user, dateTime);
+        Comment comment = CommentMapper.toComment(commentDto, item, user, dateTime);
 
-        return CommentMapper.returnCommentDto(commentRepository.save(comment));
+        return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 }

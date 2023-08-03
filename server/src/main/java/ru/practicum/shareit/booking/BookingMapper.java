@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
@@ -9,21 +10,22 @@ import ru.practicum.shareit.user.UserMapper;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class BookingMapper {
 
-    public static BookingOutDto returnBookingDto(Booking booking) {
+    public static BookingOutDto toBookingDto(Booking booking) {
         BookingOutDto bookingOutDto = BookingOutDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .status(booking.getStatus())
-                .item(ItemMapper.returnItemDto(booking.getItem()))
-                .booker(UserMapper.returnUserDto(booking.getBooker()))
+                .item(ItemMapper.toItemDto(booking.getItem()))
+                .booker(UserMapper.toUserDto(booking.getBooker()))
                 .build();
         return bookingOutDto;
     }
 
-    public static BookingShortDto returnBookingShortDto(Booking booking) {
+    public static BookingShortDto toBookingShortDto(Booking booking) {
         BookingShortDto bookingShortDto = BookingShortDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
@@ -33,7 +35,7 @@ public class BookingMapper {
         return bookingShortDto;
     }
 
-    public static Booking returnBooking(BookingDto bookingDto) {
+    public static Booking toBooking(BookingDto bookingDto) {
 
         Booking booking = Booking.builder()
                 .start(bookingDto.getStart())
@@ -48,11 +50,11 @@ public class BookingMapper {
         return booking;
     }
 
-    public static List<BookingOutDto> returnBookingDtoList(Iterable<Booking> bookings) {
+    public static List<BookingOutDto> toBookingDtoList(Iterable<Booking> bookings) {
         List<BookingOutDto> result = new ArrayList<>();
 
         for (Booking booking : bookings) {
-            result.add(returnBookingDto(booking));
+            result.add(toBookingDto(booking));
         }
         return result;
     }

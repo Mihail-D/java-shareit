@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CommentDto {
 
-    public Long id;
+    private Long id;
 
     @NotNull(message = "text cannot be empty.")
     @NotBlank(message = "text cannot be empty.")

@@ -3,8 +3,8 @@ package ru.practicum.shareit.booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -19,8 +19,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
@@ -28,8 +28,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class BookingServiceTest {
@@ -67,20 +68,20 @@ public class BookingServiceTest {
     void beforeEach() {
         firstUser = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         secondUser = User.builder()
                 .id(2L)
-                .name("Tiana")
-                .email("tiana@yandex.ru")
+                .name("Sam")
+                .email("sam@gmail.com")
                 .build();
 
         item = Item.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .owner(firstUser)
                 .build();
@@ -114,7 +115,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  addBooking() {
+    void addBooking() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -131,7 +132,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  addBookingWrongOwner() {
+    void addBookingWrongOwner() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -141,7 +142,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  addBookingItemBooked() {
+    void addBookingItemBooked() {
 
         item.setAvailable(false);
 
@@ -154,7 +155,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  addBookingNotValidEnd() {
+    void addBookingNotValidEnd() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -166,7 +167,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  addBookingNotValidStart() {
+    void addBookingNotValidStart() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -178,7 +179,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  approveBooking() {
+    void approveBooking() {
         BookingOutDto bookingOutDtoTest;
 
         when(bookingRepository.existsById(anyLong())).thenReturn(true);
@@ -195,7 +196,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  approveBookingWrongUser() {
+    void approveBookingWrongUser() {
         when(bookingRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(secondBooking));
         when(bookingRepository.save(any(Booking.class))).thenReturn(secondBooking);
@@ -204,7 +205,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  approveBookingWrongStatus() {
+    void approveBookingWrongStatus() {
         when(bookingRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(firstBooking));
         when(bookingRepository.save(any(Booking.class))).thenReturn(firstBooking);
@@ -213,7 +214,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  getBookingById() {
+    void getBookingById() {
         when(bookingRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(firstBooking));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -227,7 +228,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void  getBookingByIdError() {
+    void getBookingByIdError() {
         when(bookingRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(firstBooking));
         when(userRepository.existsById(anyLong())).thenReturn(true);
@@ -242,7 +243,7 @@ public class BookingServiceTest {
 
         String state = "ALL";
 
-        List<BookingOutDto> bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        List<BookingOutDto> bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
@@ -251,7 +252,7 @@ public class BookingServiceTest {
         when(bookingRepository.getAllByBookerIdAndStartBeforeAndEndAfterOrderByStartAsc(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "CURRENT";
 
-        bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
@@ -260,7 +261,7 @@ public class BookingServiceTest {
         when(bookingRepository.getAllByBookerIdAndEndBeforeOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "PAST";
 
-        bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
@@ -269,7 +270,7 @@ public class BookingServiceTest {
         when(bookingRepository.getAllByBookerIdAndStartAfterOrderByStartDesc(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "FUTURE";
 
-        bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
@@ -278,7 +279,7 @@ public class BookingServiceTest {
         when(bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "WAITING";
 
-        bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());
@@ -287,7 +288,7 @@ public class BookingServiceTest {
         when(bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(anyLong(), any(Status.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstBooking)));
         state = "REJECTED";
 
-        bookingOutDtoTest = bookingService. getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
+        bookingOutDtoTest = bookingService.getAllBookingsByBookerId(firstUser.getId(), state, 5, 10);
 
         assertEquals(bookingOutDtoTest.get(0).getId(), firstBooking.getId());
         assertEquals(bookingOutDtoTest.get(0).getStatus(), firstBooking.getStatus());

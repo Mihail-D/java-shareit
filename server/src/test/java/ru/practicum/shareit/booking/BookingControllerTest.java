@@ -49,20 +49,19 @@ public class BookingControllerTest {
 
     private BookingOutDto secondBookingOutDto;
 
-
     @BeforeEach
     void beforeEach() {
 
         user = UserDto.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         itemDto = ItemDto.builder()
                 .requestId(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .build();
 
@@ -112,7 +111,7 @@ public class BookingControllerTest {
 
     @Test
     void approveBooking() throws Exception {
-        when(bookingService.approveBooking(anyLong(),anyLong(), anyBoolean())).thenReturn(firstBookingOutDto);
+        when(bookingService.approveBooking(anyLong(), anyLong(), anyBoolean())).thenReturn(firstBookingOutDto);
 
         mvc.perform(patch("/bookings/{bookingId}", 1L)
                         .param("approved", "true")
@@ -131,7 +130,7 @@ public class BookingControllerTest {
 
     @Test
     void getBookingById() throws Exception {
-        when(bookingService.getBookingById(anyLong(),anyLong())).thenReturn(firstBookingOutDto);
+        when(bookingService.getBookingById(anyLong(), anyLong())).thenReturn(firstBookingOutDto);
 
         mvc.perform(get("/bookings/{bookingId}", 1L)
                         .characterEncoding(StandardCharsets.UTF_8)

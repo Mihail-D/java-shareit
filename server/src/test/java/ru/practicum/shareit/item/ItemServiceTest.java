@@ -3,13 +3,13 @@ package ru.practicum.shareit.item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -33,8 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ItemServiceTest {
@@ -73,8 +73,8 @@ public class ItemServiceTest {
     void beforeEach() {
         user = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         itemRequest = ItemRequest.builder()
@@ -85,8 +85,8 @@ public class ItemServiceTest {
 
         item = Item.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .owner(user)
                 .request(itemRequest)
@@ -95,11 +95,11 @@ public class ItemServiceTest {
         itemDto = ItemMapper.toItemDto(item);
 
         comment = Comment.builder()
-                        .id(1L)
-                        .author(user)
-                        .created(LocalDateTime.now())
-                        .text("Thx, Cool item")
-                        .build();
+                .id(1L)
+                .author(user)
+                .created(LocalDateTime.now())
+                .text("Thx, Cool item")
+                .build();
 
         commentDto = CommentMapper.toCommentDto(comment);
 

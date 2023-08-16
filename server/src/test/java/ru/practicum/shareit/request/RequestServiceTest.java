@@ -3,8 +3,8 @@ package ru.practicum.shareit.request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.model.Item;
@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class RequestServiceTest {
@@ -42,7 +42,6 @@ public class RequestServiceTest {
     @MockBean
     private UnionService unionService;
 
-
     private User firstUser;
     private User secondUser;
     private ItemRequest firstItemRequest;
@@ -54,14 +53,14 @@ public class RequestServiceTest {
     void beforeEach() {
         firstUser = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         secondUser = User.builder()
                 .id(2L)
-                .name("Tiana")
-                .email("tiana@yandex.ru")
+                .name("Sam")
+                .email("sam@gmail.com")
                 .build();
 
         firstItemRequest = ItemRequest.builder()
@@ -78,8 +77,8 @@ public class RequestServiceTest {
 
         item = Item.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .owner(firstUser)
                 .request(firstItemRequest)
@@ -130,7 +129,7 @@ public class RequestServiceTest {
         assertEquals(itemRequestDtoTest.getItems().get(0).getDescription(), item.getDescription());
         assertEquals(itemRequestDtoTest.getItems().get(0).getAvailable(), item.getAvailable());
 
-        verify(itemRequestRepository, times(1)).getByIdIsNotOrderByCreatedAsc(anyLong(),any(PageRequest.class));
+        verify(itemRequestRepository, times(1)).getByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class));
     }
 
     @Test
@@ -139,7 +138,6 @@ public class RequestServiceTest {
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.ofNullable(firstItemRequest));
         when(itemRepository.getByRequestId(anyLong())).thenReturn(List.of(item));
-
 
         ItemRequestDto itemRequestDtoTest = itemRequestService.getRequestById(firstUser.getId(), firstItemRequest.getId());
 

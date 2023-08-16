@@ -54,13 +54,13 @@ public class ItemControllerTest {
 
         user = User.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         itemRequest = ItemRequest.builder()
                 .id(1L)
-                .description("Anna")
+                .description("Barbie")
                 .requester(user)
                 .created(LocalDateTime.now())
                 .build();
@@ -74,8 +74,8 @@ public class ItemControllerTest {
 
         firstitemDto = ItemDto.builder()
                 .id(1L)
-                .name("screwdriver")
-                .description("works well, does not ask to eat")
+                .name("slippers")
+                .description("Step into comfort with our cozy slippers!")
                 .available(true)
                 .comments(List.of(commentDto))
                 .requestId(itemRequest.getId())
@@ -83,8 +83,8 @@ public class ItemControllerTest {
 
         secondItemDto = ItemDto.builder()
                 .id(1L)
-                .name("guitar")
-                .description("a very good tool")
+                .name("flyswatter")
+                .description("Flyswatter - an effective tool for swatting flies and other pesky insects.")
                 .available(true)
                 .comments(Collections.emptyList())
                 .requestId(itemRequest.getId())

@@ -35,15 +35,15 @@ public class UserControllerTest {
 
     private UserDto firstUserDto;
 
-    private  UserDto secondUserDto;
+    private UserDto secondUserDto;
 
     @BeforeEach
     void beforeEach() {
 
         firstUserDto = UserDto.builder()
                 .id(1L)
-                .name("Anna")
-                .email("anna@yandex.ru")
+                .name("Barbie")
+                .email("barbie@gmail.com")
                 .build();
 
         secondUserDto = UserDto.builder()

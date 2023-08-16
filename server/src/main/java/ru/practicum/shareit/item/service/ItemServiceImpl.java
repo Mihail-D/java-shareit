@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -18,9 +18,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.util.UnionService;
 
 import java.time.LocalDateTime;
@@ -44,24 +45,37 @@ public class ItemServiceImpl implements ItemService {
 
         unionService.checkUser(userId);
 
-        User user = userRepository.findById(userId).get();
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new NoSuchElementException("User with id " + userId + " not found");
+        }
+        User user = userOptional.get();
         Item item = ItemMapper.toItem(itemDto, user);
 
         if (itemDto.getRequestId() != null) {
             unionService.checkRequest(itemDto.getRequestId());
-            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId()).get());
+            Optional<ItemRequest> itemRequestOptional = itemRequestRepository.findById(itemDto.getRequestId());
+            if (itemRequestOptional.isEmpty()) {
+                throw new NoSuchElementException("Item request with id " + itemDto.getRequestId() + " not found");
+            }
+            item.setRequest(itemRequestOptional.get());
         }
         itemRepository.save(item);
 
         return ItemMapper.toItemDto(item);
     }
 
+
     @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
 
         unionService.checkUser(userId);
-        User user = userRepository.findById(userId).get();
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new NoSuchElementException("User with id " + userId + " not found");
+        }
+        User user = userOptional.get();
 
         unionService.checkItem(itemId);
         Item item = ItemMapper.toItem(itemDto, user);
@@ -72,7 +86,11 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
-        Item newItem = itemRepository.findById(item.getId()).get();
+        Optional<Item> newItemOptional = itemRepository.findById(item.getId());
+        if (newItemOptional.isEmpty()) {
+            throw new NoSuchElementException("Item with id " + item.getId() + " not found");
+        }
+        Item newItem = newItemOptional.get();
 
         if (item.getName() != null) {
             newItem.setName(item.getName());
@@ -91,12 +109,17 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(newItem);
     }
 
+
     @Transactional(readOnly = true)
     @Override
     public ItemDto getItemById(long itemId, long userId) {
 
         unionService.checkItem(itemId);
-        Item item = itemRepository.findById(itemId).get();
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
+        if (itemOptional.isEmpty()) {
+            throw new NoSuchElementException("Item with id " + itemId + " not found");
+        }
+        Item item = itemOptional.get();
 
         ItemDto itemDto = ItemMapper.toItemDto(item);
 
@@ -108,7 +131,7 @@ public class ItemServiceImpl implements ItemService {
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemId, Status.APPROVED, LocalDateTime.now());
 
             if (lastBooking.isPresent()) {
-                 itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
+                itemDto.setLastBooking(BookingMapper.toBookingShortDto(lastBooking.get()));
             } else {
                 itemDto.setLastBooking(null);
             }
@@ -130,6 +153,7 @@ public class ItemServiceImpl implements ItemService {
 
         return itemDto;
     }
+
 
     @Transactional(readOnly = true)
     @Override
@@ -176,11 +200,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional(readOnly = true)
     @Override
-    public  List<ItemDto> searchItem(String text, Integer from, Integer size) {
+    public List<ItemDto> searchItem(String text, Integer from, Integer size) {
 
         PageRequest pageRequest = PageRequest.of(from / size, size);
 
-        if (text.equals("")) {
+        if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
             return ItemMapper.toItemDtoList(itemRepository.search(text, pageRequest));

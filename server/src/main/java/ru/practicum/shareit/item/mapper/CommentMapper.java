@@ -14,17 +14,16 @@ import java.util.List;
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
-        CommentDto commentDto = CommentDto.builder()
+        return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .created(comment.getCreated())
                 .authorName(comment.getAuthor().getName())
                 .build();
-        return commentDto;
     }
 
     public static Comment toComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
-       Comment comment = Comment.builder()
+        Comment comment = Comment.builder()
                 .text(commentDto.getText())
                 .created(dateTime)
                 .item(item)

@@ -1,13 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 
 import java.util.List;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @Data
 @Builder

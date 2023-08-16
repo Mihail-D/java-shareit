@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
         item.setId(itemId);
 
-        if (!itemRepository.findByOwnerId(userId).contains(item)) {
+        if (!itemRepository.getByOwnerId(userId).contains(item)) {
             throw new NotFoundException(Item.class, "the item was not found with the user id " + userId);
         }
 
@@ -143,7 +143,7 @@ public class ItemServiceImpl implements ItemService {
             }
         }
 
-        List<Comment> commentList = commentRepository.findAllByItemId(itemId);
+        List<Comment> commentList = commentRepository.getAllByItemId(itemId);
 
         if (!commentList.isEmpty()) {
             itemDto.setComments(CommentMapper.toCommentDtoList(commentList));
@@ -164,7 +164,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemDto> resultList = new ArrayList<>();
 
-        for (ItemDto itemDto : ItemMapper.toItemDtoList(itemRepository.findByOwnerIdOrderById(userId, pageRequest))) {
+        for (ItemDto itemDto : ItemMapper.toItemDtoList(itemRepository.getByOwnerIdOrderById(userId, pageRequest))) {
 
             Optional<Booking> lastBooking = bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
             Optional<Booking> nextBooking = bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(itemDto.getId(), Status.APPROVED, LocalDateTime.now());
@@ -186,7 +186,7 @@ public class ItemServiceImpl implements ItemService {
 
         for (ItemDto itemDto : resultList) {
 
-            List<Comment> commentList = commentRepository.findAllByItemId(itemDto.getId());
+            List<Comment> commentList = commentRepository.getAllByItemId(itemDto.getId());
 
             if (!commentList.isEmpty()) {
                 itemDto.setComments(CommentMapper.toCommentDtoList(commentList));

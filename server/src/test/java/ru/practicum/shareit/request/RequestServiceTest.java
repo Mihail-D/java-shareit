@@ -105,8 +105,8 @@ public class RequestServiceTest {
     @Test
     void getRequests() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRequestRepository.findByRequesterIdOrderByCreatedAsc(anyLong())).thenReturn(List.of(firstItemRequest));
-        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+        when(itemRequestRepository.getByRequesterIdOrderByCreatedAsc(anyLong())).thenReturn(List.of(firstItemRequest));
+        when(itemRepository.getByRequestId(anyLong())).thenReturn(List.of(item));
 
         ItemRequestDto itemRequestDtoTest = itemRequestService.getRequests(firstUser.getId()).get(0);
 
@@ -115,13 +115,13 @@ public class RequestServiceTest {
         assertEquals(itemRequestDtoTest.getItems().get(0).getDescription(), item.getDescription());
         assertEquals(itemRequestDtoTest.getItems().get(0).getAvailable(), item.getAvailable());
 
-        verify(itemRequestRepository, times(1)).findByRequesterIdOrderByCreatedAsc(anyLong());
+        verify(itemRequestRepository, times(1)).getByRequesterIdOrderByCreatedAsc(anyLong());
     }
 
     @Test
     void getAllRequests() {
-        when(itemRequestRepository.findByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstItemRequest)));
-        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+        when(itemRequestRepository.getByIdIsNotOrderByCreatedAsc(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(firstItemRequest)));
+        when(itemRepository.getByRequestId(anyLong())).thenReturn(List.of(item));
 
         ItemRequestDto itemRequestDtoTest = itemRequestService.getAllRequests(firstUser.getId(), 5, 10).get(0);
 
@@ -130,7 +130,7 @@ public class RequestServiceTest {
         assertEquals(itemRequestDtoTest.getItems().get(0).getDescription(), item.getDescription());
         assertEquals(itemRequestDtoTest.getItems().get(0).getAvailable(), item.getAvailable());
 
-        verify(itemRequestRepository, times(1)).findByIdIsNotOrderByCreatedAsc(anyLong(),any(PageRequest.class));
+        verify(itemRequestRepository, times(1)).getByIdIsNotOrderByCreatedAsc(anyLong(),any(PageRequest.class));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class RequestServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.ofNullable(firstItemRequest));
-        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+        when(itemRepository.getByRequestId(anyLong())).thenReturn(List.of(item));
 
 
         ItemRequestDto itemRequestDtoTest = itemRequestService.getRequestById(firstUser.getId(), firstItemRequest.getId());
@@ -153,13 +153,13 @@ public class RequestServiceTest {
 
     @Test
     void addItemsToRequest() {
-        when(itemRepository.findByRequestId(anyLong())).thenReturn(List.of(item));
+        when(itemRepository.getByRequestId(anyLong())).thenReturn(List.of(item));
 
         ItemRequestDto itemRequestDtoTest = itemRequestService.addItemsToRequest(firstItemRequest);
 
         assertEquals(itemRequestDtoTest.getItems().get(0).getId(), item.getId());
         assertEquals(itemRequestDtoTest.getItems().get(0).getRequestId(), firstUser.getId());
 
-        verify(itemRepository, times(1)).findByRequestId(anyLong());
+        verify(itemRepository, times(1)).getByRequestId(anyLong());
     }
 }

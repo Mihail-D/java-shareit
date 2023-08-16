@@ -5,14 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @Slf4j
 @Controller
@@ -30,8 +26,10 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto,
-                                              @PathVariable Long userId) {
+    public ResponseEntity<UserDto> updateUser(
+            @RequestBody UserDto userDto,
+            @PathVariable Long userId
+    ) {
 
         log.info("Update User {} ", userDto.getId());
         return ResponseEntity.ok(userService.updateUser(userDto, userId));
@@ -57,5 +55,5 @@ public class UserController {
 
         log.info("List all Users");
         return ResponseEntity.ok(userService.getAllUsers());
-   }
+    }
 }

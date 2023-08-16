@@ -50,7 +50,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         unionService.checkUser(userId);
 
-        List<ItemRequest> itemRequests = itemRequestRepository.findByRequesterIdOrderByCreatedAsc(userId);
+        List<ItemRequest> itemRequests = itemRequestRepository.getByRequesterIdOrderByCreatedAsc(userId);
 
         List<ItemRequestDto> result = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequests) {
@@ -64,7 +64,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         PageRequest pageRequest = PageRequest.of(from / size, size);
 
-        Page<ItemRequest> itemRequests = itemRequestRepository.findByIdIsNotOrderByCreatedAsc(userId, pageRequest);
+        Page<ItemRequest> itemRequests = itemRequestRepository.getByIdIsNotOrderByCreatedAsc(userId, pageRequest);
 
         List<ItemRequestDto> result = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequests) {
@@ -88,7 +88,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto addItemsToRequest(ItemRequest itemRequest) {
 
             ItemRequestDto itemRequestDto = ItemRequestMapper.toItemRequestDto(itemRequest);
-            List<Item> items = itemRepository.findByRequestId(itemRequest.getId());
+            List<Item> items = itemRepository.getByRequestId(itemRequest.getId());
             itemRequestDto.setItems(ItemMapper.toItemDtoList(items));
 
         return itemRequestDto;

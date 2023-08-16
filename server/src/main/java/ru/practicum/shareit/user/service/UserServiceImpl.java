@@ -8,10 +8,11 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.util.UnionService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,17 +40,18 @@ public class UserServiceImpl implements UserService {
         user.setId(userId);
 
         unionService.checkUser(userId);
-        User newUser = userRepository.findById(userId).get();
+        User newUser = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
 
         if (user.getName() != null) {
             newUser.setName(user.getName());
         }
 
         if (user.getEmail() != null) {
-            List<User> findEmail = userRepository.findByEmail(user.getEmail());
+            List<User> findEmail = userRepository.getByEmail(user.getEmail());
 
             if (!findEmail.isEmpty() && findEmail.get(0).getId() != userId) {
-                throw new EmailExistException("there is already a user with an email " + user.getEmail());
+                throw new EmailExistException("There is already a user with an email " + user.getEmail());
             }
             newUser.setEmail(user.getEmail());
         }
@@ -70,9 +72,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto getUserById(long userId) {
-
         unionService.checkUser(userId);
-        return UserMapper.toUserDto(userRepository.findById(userId).get());
+        Optional<User> userOptional = userRepository.findById(userId);
+        return userOptional.map(UserMapper::toUserDto).orElse(null);
     }
 
     @Transactional(readOnly = true)

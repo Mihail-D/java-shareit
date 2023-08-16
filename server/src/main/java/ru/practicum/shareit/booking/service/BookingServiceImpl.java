@@ -147,7 +147,7 @@ public class BookingServiceImpl implements BookingService {
         unionService.checkUser(userId);
         PageRequest pageRequest = PageRequest.of(from / size, size);
 
-        if (itemRepository.findByOwnerId(userId).isEmpty()) {
+        if (itemRepository.getByOwnerId(userId).isEmpty()) {
             throw new ValidationException("User does not have items to booking");
         }
         Page<Booking> bookings = null;

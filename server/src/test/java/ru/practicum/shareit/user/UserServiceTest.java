@@ -71,7 +71,7 @@ class UserServiceTest {
     void updateUser() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(firstUser));
-        when(userRepository.findByEmail(anyString())).thenReturn(List.of(firstUser));
+        when(userRepository.getByEmail(anyString())).thenReturn(List.of(firstUser));
         when(userRepository.save(any(User.class))).thenReturn(firstUser);
 
         firstUserDto.setName("Sofia");
@@ -82,7 +82,7 @@ class UserServiceTest {
         assertEquals(userDtoUpdated.getName(), firstUserDto.getName());
         assertEquals(userDtoUpdated.getEmail(), firstUserDto.getEmail());
 
-        verify(userRepository, times(1)).findByEmail(firstUser.getEmail());
+        verify(userRepository, times(1)).getByEmail(firstUser.getEmail());
         verify(userRepository, times(1)).save(firstUser);
     }
 
@@ -90,7 +90,7 @@ class UserServiceTest {
     void updateUser_wrongEmail() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(firstUser));
-        when(userRepository.findByEmail(anyString())).thenReturn(List.of(firstUser));
+        when(userRepository.getByEmail(anyString())).thenReturn(List.of(firstUser));
 
         firstUserDto.setEmail("");
         assertThrows(EmailExistException.class, () -> userService.updateUser(firstUserDto, 2L));

@@ -1,10 +1,10 @@
 package ru.practicum.shareit.booking.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -16,7 +16,7 @@ import java.util.List;
 public class BookingMapper {
 
     public static BookingOutDto toBookingDto(Booking booking) {
-        BookingOutDto bookingOutDto = BookingOutDto.builder()
+        return BookingOutDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
@@ -24,17 +24,15 @@ public class BookingMapper {
                 .item(ItemMapper.toItemDto(booking.getItem()))
                 .booker(UserMapper.toUserDto(booking.getBooker()))
                 .build();
-        return bookingOutDto;
     }
 
     public static BookingShortDto toBookingShortDto(Booking booking) {
-        BookingShortDto bookingShortDto = BookingShortDto.builder()
+        return BookingShortDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
                 .bookerId(booking.getBooker().getId())
                 .build();
-        return bookingShortDto;
     }
 
     public static Booking toBooking(BookingDto bookingDto) {

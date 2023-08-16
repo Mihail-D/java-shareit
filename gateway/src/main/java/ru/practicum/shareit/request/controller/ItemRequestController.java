@@ -22,12 +22,13 @@ import static ru.practicum.shareit.util.Constant.HEADER_USER;
 @Validated
 public class ItemRequestController {
 
-
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
-    public ResponseEntity<Object> addRequest(@RequestHeader(HEADER_USER) Long userId,
-                                             @RequestBody @Valid ItemRequestDto itemRequestDto) {
+    public ResponseEntity<Object> addRequest(
+            @RequestHeader(HEADER_USER) Long userId,
+            @RequestBody @Valid ItemRequestDto itemRequestDto
+    ) {
 
         log.info("User {}, add new booking", userId);
         return itemRequestClient.addRequest(userId, itemRequestDto);
@@ -41,17 +42,21 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllRequests(@RequestHeader(HEADER_USER) Long userId,
-                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+    public ResponseEntity<Object> getAllRequests(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size
+    ) {
 
         log.info("Get all requests by All users ");
         return itemRequestClient.getAllRequests(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getRequestById(@RequestHeader(HEADER_USER) Long userId,
-                                                 @PathVariable("requestId") Long requestId) {
+    public ResponseEntity<Object> getRequestById(
+            @RequestHeader(HEADER_USER) Long userId,
+            @PathVariable("requestId") Long requestId
+    ) {
 
         log.info("Get request {}", requestId);
         return itemRequestClient.getRequestById(userId, requestId);

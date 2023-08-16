@@ -171,8 +171,8 @@ public class ItemServiceTest {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
-        when(bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
+        when(bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
+        when(bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
         when(commentRepository.findAllByItemId(anyLong())).thenReturn(List.of(comment));
 
         ItemDto itemDtoTest = itemService.getItemById(item.getId(), user.getId());
@@ -189,8 +189,8 @@ public class ItemServiceTest {
     void getItemsUser() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findByOwnerIdOrderById(anyLong(), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(item)));
-        when(bookingRepository.findFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
-        when(bookingRepository.findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
+        when(bookingRepository.getFirstByItemIdAndStatusAndStartBeforeOrderByStartDesc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(firstBooking));
+        when(bookingRepository.getFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(item.getId(), Status.APPROVED, LocalDateTime.now())).thenReturn(Optional.of(secondBooking));
         when(commentRepository.findAllByItemId(anyLong())).thenReturn(List.of(comment));
 
         ItemDto itemDtoTest = itemService.getItemsUser(user.getId(), 5, 10).get(0);
@@ -232,7 +232,7 @@ public class ItemServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(anyLong(), anyLong(), any(Status.class), any(LocalDateTime.class))).thenReturn(Optional.of(firstBooking));
+        when(bookingRepository.getFirstByItemIdAndBookerIdAndStatusAndEndBefore(anyLong(), anyLong(), any(Status.class), any(LocalDateTime.class))).thenReturn(Optional.of(firstBooking));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentDto commentDtoTest = itemService.addComment(user.getId(), item.getId(), commentDto);
@@ -250,7 +250,7 @@ public class ItemServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(anyLong(), anyLong(), any(Status.class), any(LocalDateTime.class))).thenReturn(Optional.empty());
+        when(bookingRepository.getFirstByItemIdAndBookerIdAndStatusAndEndBefore(anyLong(), anyLong(), any(Status.class), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         assertThrows(ValidationException.class, () -> itemService.addComment(user.getId(), item.getId(), commentDto));
     }

@@ -13,5 +13,4 @@ public class ErrorHandler {
     public ErrorResponse handleUnsupportedStatusException(final UnsupportedStatusException e) {
         return new ErrorResponse(e.getMessage());
     }
-
 }

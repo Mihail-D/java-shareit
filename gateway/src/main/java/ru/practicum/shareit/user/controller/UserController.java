@@ -54,6 +54,4 @@ public class UserController {
         log.info("List all Users");
         return userClient.getAllUsers();
     }
-
-
 }

@@ -14,10 +14,6 @@ import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Slf4j
 @Validated
 @Controller

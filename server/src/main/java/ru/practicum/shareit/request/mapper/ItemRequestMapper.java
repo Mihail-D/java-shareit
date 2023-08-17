@@ -14,22 +14,20 @@ import java.util.List;
 public class ItemRequestMapper {
 
     public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+        return ItemRequestDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated())
                 .items(Collections.emptyList())
                 .build();
-        return itemRequestDto;
     }
 
     public static ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User user) {
-        ItemRequest itemRequest = ItemRequest.builder()
+        return ItemRequest.builder()
                 .description(itemRequestDto.getDescription())
                 .created(LocalDateTime.now())
                 .requester(user)
                 .build();
-        return itemRequest;
     }
 
     public static List<ItemRequestDto> toItemRequestDtoList(Iterable<ItemRequest> requests) {

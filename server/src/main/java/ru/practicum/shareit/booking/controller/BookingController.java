@@ -13,10 +13,6 @@ import java.util.List;
 
 import static ru.practicum.shareit.util.Constant.HEADER_USER;
 
-/**
- * TODO Sprint add-bookings.
- */
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
